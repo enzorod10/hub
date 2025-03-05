@@ -1,5 +1,5 @@
 export interface Task{
-    id: number;
+    id: string;
     type: TaskType;
     name: string;
     priority: Priority;
@@ -10,6 +10,12 @@ export interface Mood{
     id: number;
     type: MoodType;
     emoji: string;
+}
+
+export interface Prompt{
+    id: number;
+    question: string;
+    answer: string;
 }
 
 type MoodType = 'happy' | 'sad' | 'neutral';
