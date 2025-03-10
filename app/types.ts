@@ -19,5 +19,5 @@ export interface Prompt{
 }
 
 type MoodType = 'happy' | 'sad' | 'neutral';
-type Priority = 'low' | 'medium' | 'high';
-type TaskType = 'work' | 'personal' | 'other';
+export type Priority = 'low' | 'medium' | 'high';
+export type TaskType = 'work' | 'personal' | 'other';
