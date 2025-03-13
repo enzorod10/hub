@@ -33,6 +33,9 @@ export default function Home() {
           </div>
         </div>
         <div>
+          <div>
+            <textarea />
+          </div>
           <div className="w-full border relative rounded-md p-4 gap-4 justify-center">
             <form>
               <input onChange={(e) => setTaskName(e.target.value)} type="text" placeholder="Add a task" className="w-full border rounded-md p-4" />
@@ -52,16 +55,16 @@ export default function Home() {
               </RadioGroup>
               <RadioGroup value={type} onValueChange={(value: string) => setType(value as TaskType)} className="flex items-center justify-center space-x-4">
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="work" id="r1" />
-                  <Label htmlFor="r1">Work</Label>
+                  <RadioGroupItem value="work" id="r4" />
+                  <Label htmlFor="r4">Work</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="personal" id="r2" />
-                  <Label htmlFor="r2">Personal</Label>
+                  <RadioGroupItem value="personal" id="r5" />
+                  <Label htmlFor="r5">Personal</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="other" id="r3" />
-                  <Label htmlFor="r3">Other</Label>
+                  <RadioGroupItem value="other" id="r6" />
+                  <Label htmlFor="r6">Other</Label>
                 </div>
               </RadioGroup>
               <button onClick={(e) => handleAddTask(e)} className="text-2xl absolute left-0 top-0">
@@ -70,8 +73,16 @@ export default function Home() {
             </form>
             <div>
               {tasks?.map((task) => (
-                <div key={task.id} className="flex items-center justify-center border rounded-md p-4 max-w-sm w-full">
-                  {task.name}
+                <div key={task.id} className="flex flex-col items-center justify-center border rounded-md p-4 max-w-sm w-full">
+                  <div>
+                    {task.name}
+                  </div>
+                  <div>
+                    {task.priority}
+                  </div>
+                  <div>
+                    {task.type}
+                  </div>
                 </div>
               ))}
             </div>
