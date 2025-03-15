@@ -29,7 +29,8 @@ export default function Home() {
             Main Area here
           </div>
           <div className="flex items-center justify-center border rounded-md p-4 max-w-sm w-full">
-            Date here with temperature
+            67&deg;F img here
+            Sunny
           </div>
         </div>
         <div>
