@@ -1,15 +1,20 @@
 'use client';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Task, TaskType, Priority } from "./types";
 import { v4 as uuidv4 } from 'uuid';
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+
+// Very fast and raw code to get Ai intergration done quickly.
+// Will refactor later.
 
 export default function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [taskName, setTaskName] = useState<string>('');
   const [type, setType] = useState<TaskType>("work");
   const [selectedPriority, setSelectedPriority] = useState<Priority>("low");
+  const [geoLocation, setGeoLocation] = useState<{lat: number, lon: number} | undefined>();
+  const [weather, setWeather] = useState<any>();
 
   const handleAddTask = (e) => {
     e.preventDefault();
@@ -21,6 +26,47 @@ export default function Home() {
       id: uuidv4() }]);
   }
 
+  useEffect(() => {
+    const callFunc = async () => {
+      const res = await fetch('https://nominatim.openstreetmap.org/search?q=newark&format=json&limit=1', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+          'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token'}})
+      const data = await res.json();
+      setGeoLocation({
+        lat: data[0].lat,
+        lon: data[0].lon });
+    }
+
+    callFunc();
+  }, [])
+
+  useEffect(() => {
+    const fetchWeather = async () => {
+      if (geoLocation) {
+        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${geoLocation.lat}&longitude=${geoLocation.lon}&hourly=temperature_2m`);
+        const data = await res.json();
+        console.log(data);
+        const weatherTemp = [];
+        data.hourly.time.forEach((time, index) => {
+          const hour = new Date(time).getHours();
+          if (hour === new Date().getHours()) {
+            weatherTemp.push({hour, temp: data.hourly.temperature_2m[index]})
+          }
+        }
+        );
+        setWeather(weatherTemp);
+      }
+    }
+
+    fetchWeather();
+  }, [geoLocation])
+
+  console.log(weather)
+
   return (
     <div className="m-4">
       <div>
@@ -28,9 +74,22 @@ export default function Home() {
           <div className="flex items-center justify-center border rounded-md p-4 max-w-sm w-full">
             Main Area here
           </div>
-          <div className="flex items-center justify-center border rounded-md p-4 max-w-sm w-full">
-            67&deg;F img here
-            Sunny
+          <div className="flex flex-col border rounded-md p-4 max-w-sm w-full">
+            <div className="text-sm">
+              Monday, January 1
+            </div>
+            <div className='flex flex-wrap'>
+              {weather && weather.length > 0 && weather.map((weatherData, index) => (
+                <div key={index} className="flex flex-col items-center justify-center border rounded-md p-4">
+                  <div className="text-xl">
+                    {weatherData.hour}:00
+                  </div>
+                  <div className="text-md">
+                    {weatherData.temp}&deg;c
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
         <div>
