@@ -49,7 +49,6 @@ export default function Home() {
       if (geoLocation) {
         const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${geoLocation.lat}&longitude=${geoLocation.lon}&hourly=temperature_2m`);
         const data = await res.json();
-        console.log(data);
         const weatherTemp = [];
         data.hourly.time.forEach((time, index) => {
           const hour = new Date(time).getHours();
@@ -64,8 +63,6 @@ export default function Home() {
 
     fetchWeather();
   }, [geoLocation])
-
-  console.log(weather)
 
   return (
     <div className="m-4">
