@@ -4,6 +4,7 @@ import { Task, TaskType, Priority } from "./types";
 import { v4 as uuidv4 } from 'uuid';
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import MainArea from "@/components/MainArea";
 
 // Very fast and raw code to get Ai intergration done quickly.
 // Will refactor later.
@@ -68,9 +69,8 @@ export default function Home() {
     <div className="m-4">
       <div>
         <div className="flex w-full border rounded-md p-4 gap-4 justify-center">
-          <div className="flex items-center justify-center border rounded-md p-4 max-w-sm w-full">
-            Main Area here
-          </div>
+          
+          <MainArea/>
           <div className="flex flex-col border rounded-md p-4 max-w-sm w-full">
             <div className="text-sm">
               Monday, January 1
