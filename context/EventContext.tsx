@@ -1,14 +1,6 @@
 'use client';
 import React, { createContext, useContext, useState, useEffect } from 'react';
-
-export interface Event {
-  id: number;
-  title: string;
-  description: string;
-  date: Date;
-  completed: boolean;
-  streamerId: number;
-}
+import { Event } from '@/app/types';
 
 interface EventContextState {
   dateClicked: Date | null;

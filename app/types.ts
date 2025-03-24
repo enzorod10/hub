@@ -18,6 +18,15 @@ export interface Prompt{
     answer: string;
 }
 
+export interface Event {
+    id: number;
+    title: string;
+    description: string;
+    date: Date;
+    completed: boolean;
+    streamerId: number;
+}
+
 type MoodType = 'happy' | 'sad' | 'neutral';
 export type Priority = 'low' | 'medium' | 'high';
 export type TaskType = 'work' | 'personal' | 'other';
