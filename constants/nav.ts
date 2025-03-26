@@ -14,6 +14,12 @@ export const navItems: NavItem[] = [
     },
     {
         id: 1,
+        name: 'Tasks',
+        href: '/tasks',
+        icon: 'check'
+    },
+    {
+        id: 2,
         name: 'Calendar',
         href: '/calendar',
         icon: 'calendar'
