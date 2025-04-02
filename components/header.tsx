@@ -1,32 +1,27 @@
 import React from 'react';
+import { Avatar, AvatarImage } from './ui/avatar';
+import { UserNav } from './user-nav';
 
-const Header: React.FC = () => {
+export default function Header() {
     return (
-        <header className="bg-blue-600 text-white shadow-md">
-            <div className="container mx-auto flex items-center justify-between p-4">
-                <h1 className="text-xl font-bold">Your Own Hub</h1>
-                <nav>
-                    <ul className="flex space-x-4">
-                        <li>
-                            <a href="#" className="hover:underline">
-                                Home
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" className="hover:underline">
-                                About
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" className="hover:underline">
-                                Contact
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        </header>
+      <div className="fixed top-0 left-0 right-0 supports-backdrop-blur:bg-background/60 border-b bg-background/95 backdrop-blur z-20">
+        <nav className="h-14 flex items-center justify-between px-4">
+          <div className='flex items-center gap-3'>
+                <Avatar className="h-9 w-9">
+                    <AvatarImage
+                        src='/logo/kick_realm.png'
+                        alt="Kick Realm"
+                    />
+                </Avatar>       
+                <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+                    Hub
+                </h4>
+          </div>
+          <div className="flex items-center gap-2">
+            <UserNav />
+            {/* <ThemeToggle /> */}
+          </div>
+        </nav>
+      </div>
     );
-};
-
-export default Header;
+}
