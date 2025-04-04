@@ -9,8 +9,8 @@ export default function Header() {
           <div className='flex items-center gap-3'>
                 <Avatar className="h-9 w-9">
                     <AvatarImage
-                        src='/logo/kick_realm.png'
-                        alt="Kick Realm"
+                        src='/logo/hub.png'
+                        alt="Hub"
                     />
                 </Avatar>       
                 <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
@@ -18,7 +18,7 @@ export default function Header() {
                 </h4>
           </div>
           <div className="flex items-center gap-2">
-            <UserNav />
+            {/* <UserNav /> */}
             {/* <ThemeToggle /> */}
           </div>
         </nav>
