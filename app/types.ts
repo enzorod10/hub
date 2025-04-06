@@ -27,6 +27,11 @@ export interface Event {
     streamerId: number;
 }
 
+export interface User {
+    id: string;
+}
+
+
 type MoodType = 'happy' | 'sad' | 'neutral';
 export type Priority = 'low' | 'medium' | 'high';
 export type TaskType = 'work' | 'personal' | 'other';

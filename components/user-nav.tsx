@@ -10,33 +10,24 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useSessionContext } from "@/context/SessionContext";
 import Link from "next/link";
-
-// import { useSessionContext } from '@/context/SessionContext';
-// import Link from "next/link";
-// import { createClient } from "@/utils/supabase/client";
-// import { useRouter } from "next/navigation";
-// import { format } from 'date-fns';
-// import { revalidateUserInfo } from "@/app/actions";
-
-// const supabase = createClient()
+import { supabase } from '@/lib/supabaseClient'; // Ensure you have this file to create the supabase client
 
 export function UserNav() {
-
-//   const session = useSessionContext();
-//   const router = useRouter();
+  const session = useSessionContext();
 
   if (session.user) {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-            <Avatar className={`h-8 w-8 mx-auto ${session.user.photo_url ? 'border' : ''} ${session.user.photo_url ? 'p-1' : ''}`}>
+            <Avatar className={`h-8 w-8 mx-auto`}>
               <AvatarImage
-                src={`/profile_pictures/${session.user.photo_url}.png`}
-                alt={session.user.username}
+                src={`/profile_pictures/png`}
+                alt='Avatar Image'
               />
-              <AvatarFallback>{session.user.username[0]}</AvatarFallback>
+              <AvatarFallback>A</AvatarFallback>
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
@@ -44,10 +35,10 @@ export function UserNav() {
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
               <p className="text-sm font-medium leading-none">
-                {session.user?.username || ''}
+                Username
               </p>
               <p className="text-xs leading-none text-muted-foreground">
-                Joined {format(session.user.join_date, 'MMMM yyyy')}
+                Joined April 11, 2025
               </p>
             </div>
           </DropdownMenuLabel>
@@ -65,7 +56,7 @@ export function UserNav() {
             </Link>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={async () => (await supabase.auth.signOut(), revalidateUserInfo(), router.push('/login'))}>
+          <DropdownMenuItem onClick={async () => (await supabase.auth.signOut())}>
             Log out
           </DropdownMenuItem>
         </DropdownMenuContent>

@@ -1,6 +1,7 @@
 'use client';
 import { supabase } from "@/lib/supabaseClient";
 import { useEffect, createContext, useState, useContext } from "react"
+import { User } from "@/app/types";
 
 const SessionContext = createContext<{ user: unknown | null, 
   updateSession: (updatedSession) => void, loading: boolean}>
@@ -19,7 +20,14 @@ export function SessionWrapper({ children } : {
         if (!session?.user) {
           setSession(null)
         } else if (session.user){
-          profile && setSession(profile)
+          const { data: user, error } = await supabase
+            .from('profile')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+          if (!error && user){
+            setSession(user)
+          }
         }
         setLoading(false)
       })
