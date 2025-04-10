@@ -1,34 +1,20 @@
 'use client';
 
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { useEffect } from "react";
 import GoogleSignIn from "@/components/google-sign-in";
+import { useSessionContext } from "@/context/SessionContext";
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
-  
-  const [user, setUser] = useState<any>(null);
+  const router = useRouter()
+  const { user } = useSessionContext();
 
   useEffect(() => {
-    const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
-    };
-
-    getUser();
-
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user || null);
-    });
-
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-  }, []);
-
-  const signOut = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-  };
+    // If the user is already authenticated, redirect them away from the login page
+    if (user) {
+      router.push('/home'); // Redirect to the dashboard or any other page
+    }
+  }, [user, router]);
 
   return (
     <div className="w-full h-screen bg-gray-100 flex flex-col items-center justify-center">

@@ -25,6 +25,7 @@ export function SessionWrapper({ children } : {
             .select('*')
             .eq('id', session.user.id)
             .single();
+            console.log(error)
           if (!error && user){
             setSession(user)
           }
