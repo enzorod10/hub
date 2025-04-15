@@ -5,6 +5,8 @@ import { AiTest } from "@/components/Ai";
 import Nav from "@/components/nav";
 import Header from "@/components/header";
 import { SessionWrapper } from "@/context/SessionContext";
+import { ThemeProvider } from "@/components/theme-provider"
+import AlertTab from "@/components/alert-tab";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,15 +35,24 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SessionWrapper>
-          <div className="flex flex-col">
-            <Header />
-            <div className="flex">
-              <Nav />
-              {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange>
+
+          <SessionWrapper>
+            <div className="flex flex-col">
+              <Header />
+              <AlertTab />
+              <div className="flex">
+                <Nav />
+                {children}
+              </div>
             </div>
-          </div>
-        </SessionWrapper>
+          </SessionWrapper>
+        </ThemeProvider>
+
       </body>
     </html>
   );

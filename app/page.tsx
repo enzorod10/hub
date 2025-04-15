@@ -12,7 +12,7 @@ export default function Home() {
   useEffect(() => {
     // If the user is already authenticated, redirect them away from the login page
     if (user) {
-      router.push('/home'); // Redirect to the dashboard or any other page
+      router.push('/dashboard'); // Redirect to the dashboard or any other page
     }
   }, [user, router]);
 

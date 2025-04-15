@@ -1,6 +1,7 @@
 import React from 'react';
 import { Avatar, AvatarImage } from './ui/avatar';
 import { UserNav } from './user-nav';
+import { ModeToggle } from './ui/mode-toggle';
 
 export default function Header() {
     return (
@@ -19,7 +20,7 @@ export default function Header() {
           </div>
           <div className="flex items-center gap-2">
             <UserNav />
-            {/* <ThemeToggle /> */}
+            <ModeToggle />
           </div>
         </nav>
       </div>
