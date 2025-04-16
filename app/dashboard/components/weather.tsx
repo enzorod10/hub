@@ -44,11 +44,7 @@ export default function Weather() {
   }, [geoLocation])
 
     return (
-        <div className="flex flex-col border rounded-md p-4 max-w-sm w-full">
-        <div className="text-sm">
-            Monday, January 1
-        </div>
-        <div className='flex flex-wrap'>
+        <div className='flex flex-wrap justify-evenly w-full p-4'>
             {weather && weather.length > 0 && weather.map((weatherData, index) => (
             <div key={index} className="flex flex-col items-center justify-center border rounded-md p-4">
                 <div className="text-xl">
@@ -59,7 +55,6 @@ export default function Weather() {
                 </div>
             </div>
             ))}
-        </div>
         </div>
     );
   }
