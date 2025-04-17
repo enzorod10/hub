@@ -37,7 +37,7 @@ export default function ChatPage() {
           .map((msg, i) => (
             <div key={i} className={`mb-2 ${msg.role === "user" ? "text-right" : "text-left"}`}>
               <div
-                className={`inline-block px-3 py-2 rounded ${
+                className={`inline-block px-3 py-2 text-secondary rounded ${
                   msg.role === "user" ? "bg-blue-200" : "bg-green-100"
                 }`}
               >
