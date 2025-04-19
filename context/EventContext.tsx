@@ -7,7 +7,7 @@ interface EventContextState {
   setDateClicked: (date: Date) => void;
   openEditor: boolean;
   setOpenEditor: (open: boolean) => void;
-  streamerId: number;
+  userId: string;
   events: Event[];
   setEvents: React.Dispatch<React.SetStateAction<Event[]>>;
   fetchEventsForMonth: (year: number, month: number) => void;
@@ -15,7 +15,7 @@ interface EventContextState {
 
 const EventContext = createContext<EventContextState | undefined>(undefined);
 
-export const EventProvider: React.FC<{ streamerId: number, children: React.ReactNode }> = ({ streamerId, children }) => {
+export const EventProvider: React.FC<{ userId: string, children: React.ReactNode }> = ({ userId, children }) => {
   const [dateClicked, setDateClicked] = useState<Date | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
   const [loadedMonths, setLoadedMonths] = useState<{ [key: string]: boolean }>({});
@@ -26,7 +26,7 @@ export const EventProvider: React.FC<{ streamerId: number, children: React.React
     if (loadedMonths[key]) return; // Avoid fetching if already loaded
 
     try {
-      const response = await fetch(`/api/events?year=${year}&month=${month}&streamerId=${streamerId}`);
+      const response = await fetch(`/api/events?year=${year}&month=${month}&userId=${userId}`);
       if (!response.ok) {
         throw new Error('Failed to fetch events');
       }
@@ -52,10 +52,10 @@ export const EventProvider: React.FC<{ streamerId: number, children: React.React
     const month = new Date().getMonth() + 1;
     fetchEventsForMonth(year, month);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [streamerId]);
+  }, [userId]);
 
   return (
-    <EventContext.Provider value={{ dateClicked, setDateClicked, openEditor, setOpenEditor, streamerId, events, setEvents, fetchEventsForMonth }}>
+    <EventContext.Provider value={{ dateClicked, setDateClicked, openEditor, setOpenEditor, userId, events, setEvents, fetchEventsForMonth }}>
       {children}
     </EventContext.Provider>
   );

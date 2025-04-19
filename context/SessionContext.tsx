@@ -3,7 +3,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { useEffect, createContext, useState, useContext } from "react"
 import { User } from "@/app/types";
 
-const SessionContext = createContext<{ user: unknown | null, 
+const SessionContext = createContext<{ user: User | null, 
   updateSession: (updatedSession) => void, loading: boolean}>
   ({ user: null, updateSession: () => {}, 
   loading: false});
