@@ -7,9 +7,9 @@ import {
 import { format } from 'date-fns';
 
 type EventEditorProps = {
-  onSubmit: (data: { title: string, streamerId: number, date: Date, description: string }, formattedDate: string, action: 'created' | 'updated' | 'deleted') => void;
-  handleDeleteEvent: (data: { streamerId: number, date: Date }, formattedDate: string) => void;
-  event?: { title: string, date: Date, description: string, streamerId: number };
+  onSubmit: (data: { title: string, userId: string, date: Date, description: string }, formattedDate: string, action: 'created' | 'updated' | 'deleted') => void;
+  handleDeleteEvent: (data: { userId: string, date: Date }, formattedDate: string) => void;
+  event?: { title: string, date: Date, description: string, userId: string };
   date: Date;
 }
 
@@ -21,7 +21,7 @@ interface TimeBlockState {
 
 const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorProps) => {
   const divRef = useRef<null | HTMLDivElement>(null);
-  const { openEditor, setOpenEditor, streamerId } = useEventContext();
+  const { openEditor, setOpenEditor, userId } = useEventContext();
   const [newBlockAdded, setNewBlockAdded] = useState(false);
   const [title, setTitle] = useState(event?.title ?? "")
 
@@ -71,7 +71,7 @@ const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorPr
 
   useEffect(() => {
     if (openEditor) {
-      event?.title ? setTitle(event?.title) : setTitle('')
+      setTitle(event?.title || '')
       if (event?.description){
         // Regular expression to match text between ##DELIM## delimiters
         const regex = /##DELIM##(.*?)##DELIM##/gs;
@@ -82,7 +82,7 @@ const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorPr
           matches.push(match[1].trim());
         }
 
-        let timeBlocksTemp = [];
+        const timeBlocksTemp = [];
 
         for (let i = 0; i < matches.length; i += 2) {
           // Extract start time and end time
@@ -132,7 +132,7 @@ const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorPr
     // Format each time block and join them with delimiters
     const formattedDescription = timeBlocks.map(formatTimeBlock).join('');
 
-    onSubmit({ streamerId, title, date, description: formattedDescription }, format(date, 'PPPP'), event ? 'updated' : 'created')
+    onSubmit({ userId, title, date, description: formattedDescription }, format(date, 'PPPP'), event ? 'updated' : 'created')
   }
 
   return (
@@ -177,7 +177,7 @@ const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorPr
             +
           </Button>
           <div className={`flex ${event ? 'justify-between' : 'justify-end'}`}>
-            {event && <Button onClick={() => handleDeleteEvent({ streamerId, date }, format(date, 'PPPP'))} type="button" variant="destructive">Delete</Button>}
+            {event && <Button onClick={() => handleDeleteEvent({ userId, date }, format(date, 'PPPP'))} type="button" variant="destructive">Delete</Button>}
             <Button type="submit" className='me-2'>{event ? 'Update' : 'Create'}</Button>
           </div>
         </form>

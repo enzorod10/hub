@@ -2,7 +2,8 @@
 import { useEffect, useState } from "react";
 import Cell from "./cell";
 import { getYear, getMonth, getDaysInMonth, getDay, startOfMonth, isBefore, isToday, isAfter } from 'date-fns'
-// import { Event, useEventContext } from "@/context/EventContext";
+import { useEventContext } from "@/context/EventContext";
+import { Event } from "@/app/types"
 
 const monthsOfTheYear: string[] = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ]
 
@@ -12,17 +13,18 @@ const Calendar = () => {
     const [monthMapped, setMonthMapped] = useState<(Date | undefined)[] | undefined >()
     const daysOfTheWeek = [ 'Sun.', 'Mon.', 'Tues.', 'Wed.', 'Thurs.', 'Fri.', 'Sat.' ];
 
-    // const { fetchEventsForMonth, events, setDateClicked } = useEventContext(); 
+    const { fetchEventsForMonth, events, setDateClicked } = useEventContext(); 
 
     useEffect(() => {
-        let monthMappedTemp: (undefined | Date)[] = [];
+        fetchEventsForMonth(yearSelected, monthSelected);
+        const monthMappedTemp: (undefined | Date)[] = [];
         const daysInMonth = getDaysInMonth(new Date(yearSelected, monthSelected - 1)); // -1 because date-fns months are 0-indexed
         const firstDayOfMonth = getDay(startOfMonth(new Date(yearSelected, monthSelected - 1)));
         const monthArray = new Array(daysInMonth + firstDayOfMonth % 7);
 
         for (let i = 0; i < monthArray.length; i++) {
             if (i >= firstDayOfMonth % 7) {
-              let date = new Date(yearSelected, monthSelected - 1, (i - firstDayOfMonth % 7) + 1);
+              const date = new Date(yearSelected, monthSelected - 1, (i - firstDayOfMonth % 7) + 1);
               monthMappedTemp[i] = date;
             } else {
               monthMappedTemp[i] = undefined;
@@ -30,30 +32,40 @@ const Calendar = () => {
           }
 
         setMonthMapped(monthMappedTemp);
-    }, [yearSelected, monthSelected])
+    }, [yearSelected, monthSelected, fetchEventsForMonth])
 
     const handleMonthChange = (action: string) => {
         if ((action === 'prev')){
-            monthSelected === 1 ? (setMonthSelected(12), setYearSelected(yearSelected - 1)) : setMonthSelected(monthSelected - 1)
+            if (monthSelected === 1) {
+                setMonthSelected(12);
+                setYearSelected(yearSelected - 1);
+            } else {
+                setMonthSelected(monthSelected - 1);
+            }
         }
         if ((action === 'next')){
-            monthSelected === 12 ? (setMonthSelected(1), setYearSelected(yearSelected + 1)) : setMonthSelected(monthSelected + 1)
+            if (monthSelected === 12) {
+                setMonthSelected(1);
+                setYearSelected(yearSelected + 1);
+            } else {
+                setMonthSelected(monthSelected + 1);
+            }
         }
     }
 
-    // const getEventStatusColor = (event?: Event) => {
-    //     if (!event) return ''; // No event, no dot
-    //     if (event.completed){
-    //         return 'bg-green-500'
-    //     }
-    //     if (isToday(new Date(event.date))) {
-    //         return 'bg-orange-500'; // Event is ongoing
-    //     } else if (isBefore(new Date(event.date), new Date())) {
-    //         return event.completed ? 'bg-green-500' : 'bg-red-500'; // Event happened or didn't happen
-    //     } else if (isAfter(new Date(event.date), new Date())) {
-    //         return 'bg-orange-500'; // Event will happen
-    //     }
-    //   };
+    const getEventStatusColor = (event?: Event) => {
+        if (!event) return ''; // No event, no dot
+        if (event.completed){
+            return 'bg-green-500'
+        }
+        if (isToday(new Date(event.date))) {
+            return 'bg-orange-500'; // Event is ongoing
+        } else if (isBefore(new Date(event.date), new Date())) {
+            return event.completed ? 'bg-green-500' : 'bg-red-500'; // Event happened or didn't happen
+        } else if (isAfter(new Date(event.date), new Date())) {
+            return 'bg-orange-500'; // Event will happen
+        }
+      };
 
     return(
         <div className="max-w-2xl w-full min-w-max h-fit flex flex-col border rounded pb-2">
@@ -73,9 +85,9 @@ const Calendar = () => {
                     return <div key={day} className="text-xs border-b border-t py-2 sm:text-sm mb-2 flex justify-center items-center"> {day} </div>
                 })}
                 {monthMapped?.map((cell, index) => {
-                    // const event = events.find(event => cell && (new Date(event.date).toDateString() === cell.toDateString()));
-                    // const dotColor = getEventStatusColor(event);
-                    return ( <Cell key={cell ? cell.toISOString() : 0 - index} id={`date-${cell}`} date={cell} />)
+                    const event = events.find(event => cell && (new Date(event.date).toDateString() === cell.toDateString()));
+                    const dotColor = getEventStatusColor(event);
+                    return ( <Cell key={cell ? cell.toISOString() : 0 - index} id={`date-${cell}`} date={cell} setDateClicked={setDateClicked} dotColor={dotColor} />)
                 })}
             </div>
         </div>

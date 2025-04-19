@@ -7,9 +7,14 @@ import { useSessionContext } from "@/context/SessionContext";
 
 export const Schedule = () => {
 
-  const { user } = useSessionContext();
+  const { user } = useSessionContext(); 
+  if (!user) {
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  }
+
+  console.log({ id: user.id})
   return(
-    <EventProvider userId={user?.id ?? ''} >
+    <EventProvider userId={user.id} >
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-4 items-center">
           <Calendar/>

@@ -5,10 +5,12 @@ import { startOfDay, endOfDay } from 'date-fns';
 export async function GET(request: NextRequest) {
     const year = Number(request.nextUrl.searchParams.get('year'));
     const month = Number(request.nextUrl.searchParams.get('month'));
-    const streamerId = Number(request.nextUrl.searchParams.get('streamerId'));
+    const userId = request.nextUrl.searchParams.get('userId');
 
-    if (!year || !month || !streamerId) {
-        return NextResponse.json({ error: 'Year, month, and streamerId are required' });
+    console.log({year, month, userId});
+
+    if (!year || !month || !userId) {
+        return NextResponse.json({ error: 'Year, month, and userId are required' });
     }
 
     try {
@@ -16,9 +18,9 @@ export async function GET(request: NextRequest) {
         const endDate = new Date(year, month, 1);
 
         const { data: events, error } = await supabase
-            .from('events')
+            .from('event')
             .select('*')
-            .eq('streamerId', streamerId)
+            .eq('userId', userId)
             .gte('date', startDate.toISOString())
             .lt('date', endDate.toISOString());
 
@@ -37,17 +39,17 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
     try {
         // Parse request body
-        const { title, date, description, streamerId } = await request.json();
+        const { title, date, description, userId } = await request.json();
 
         // Get the start and end of the day for the given date
         const startOfDayDate = startOfDay(new Date(date));
         const endOfDayDate = endOfDay(new Date(date));
 
-        // Check if an event already exists for the given date and streamerId
+        // Check if an event already exists for the given date and userId
         const { data: existingEvent, error: fetchError } = await supabase
-            .from('events')
+            .from('event')
             .select('*')
-            .eq('streamerId', streamerId)
+            .eq('userId', userId)
             .gte('date', startOfDayDate.toISOString())
             .lt('date', endOfDayDate.toISOString())
             .single();
@@ -61,7 +63,7 @@ export async function POST(request: NextRequest) {
         if (existingEvent) {
             // Update the existing event
             const { data, error: updateError } = await supabase
-                .from('events')
+                .from('event')
                 .update({ title, description })
                 .eq('id', existingEvent.id)
                 .select()
@@ -76,8 +78,8 @@ export async function POST(request: NextRequest) {
         } else {
             // Create a new event
             const { data, error: createError } = await supabase
-                .from('events')
-                .insert([{ title, date, description, streamerId }])
+                .from('event')
+                .insert([{ title, date, description, userId }])
                 .select()
                 .single();
 
@@ -99,16 +101,16 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
     try {
         // Parse request body
-        const { date, streamerId } = await request.json();
+        const { date, userId } = await request.json();
 
         // Get the start and end of the day for the given date
         const startOfDayDate = startOfDay(new Date(date));
         const endOfDayDate = endOfDay(new Date(date));
 
         const { error } = await supabase
-            .from('events')
+            .from('event')
             .delete()
-            .eq('streamerId', streamerId)
+            .eq('userId', userId)
             .gte('date', startOfDayDate.toISOString())
             .lt('date', endOfDayDate.toISOString());
 

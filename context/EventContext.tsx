@@ -25,12 +25,14 @@ export const EventProvider: React.FC<{ userId: string, children: React.ReactNode
     const key = `${year}-${month}`;
     if (loadedMonths[key]) return; // Avoid fetching if already loaded
 
+    console.log({userId})
     try {
       const response = await fetch(`/api/events?year=${year}&month=${month}&userId=${userId}`);
       if (!response.ok) {
         throw new Error('Failed to fetch events');
       }
       const data = await response.json();
+      console.log({data})
       setEvents((prevEvents) => [...prevEvents, ...data].reduce((acc, curr) => {
         const exists = acc.find((item: { id: number; }) => {
           return item.id === curr.id;

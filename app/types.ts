@@ -24,7 +24,7 @@ export interface Event {
     description: string;
     date: Date;
     completed: boolean;
-    streamerId: number;
+    userId: string;
 }
 
 export interface User {
