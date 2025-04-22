@@ -1,67 +1,40 @@
-import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabaseClient";
 import { startOfDay, endOfDay } from 'date-fns';
-
-export async function GET(request: NextRequest) {
-    const year = Number(request.nextUrl.searchParams.get('year'));
-    const month = Number(request.nextUrl.searchParams.get('month'));
-    const userId = request.nextUrl.searchParams.get('userId');
-
-    console.log({year, month, userId});
-
-    if (!year || !month || !userId) {
-        return NextResponse.json({ error: 'Year, month, and userId are required' });
-    }
-
-    try {
-        const startDate = new Date(year, month - 1, 1);
-        const endDate = new Date(year, month, 1);
-
-        const { data: events, error } = await supabase
-            .from('event')
-            .select('*')
-            .eq('userId', userId)
-            .gte('date', startDate.toISOString())
-            .lt('date', endDate.toISOString());
-
-        if (error) {
-            console.error("Error fetching events:", error.message);
-            return NextResponse.json({ error: 'Failed to fetch events' }, { status: 500 });
-        }
-
-        return NextResponse.json(events, { status: 200 });
-    } catch (error) {
-        console.error(error);
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-    }
-}
+import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/supabaseServer';
 
 export async function POST(request: NextRequest) {
-    try {
-        // Parse request body
-        const { title, date, description, userId } = await request.json();
+    const supabase = await createClient();
 
-        // Get the start and end of the day for the given date
+    try {
+        const { title, date, description } = await request.json();
+        const {
+            data: { user },
+            error: userError,
+        } = await supabase.auth.getUser();
+
+        if (userError || !user) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        const user_id = user.id;
+
         const startOfDayDate = startOfDay(new Date(date));
         const endOfDayDate = endOfDay(new Date(date));
 
-        // Check if an event already exists for the given date and userId
         const { data: existingEvent, error: fetchError } = await supabase
             .from('event')
             .select('*')
-            .eq('userId', userId)
+            .eq('user_id', user_id)
             .gte('date', startOfDayDate.toISOString())
             .lt('date', endOfDayDate.toISOString())
             .single();
 
-        if (fetchError && fetchError.code !== 'PGRST116') { // Ignore "No rows found" error
-            console.error("Error checking existing event:", fetchError.message);
+        if (fetchError && fetchError.code !== 'PGRST116') {
             return NextResponse.json({ error: 'Failed to check existing event' }, { status: 500 });
         }
 
         let event;
         if (existingEvent) {
-            // Update the existing event
             const { data, error: updateError } = await supabase
                 .from('event')
                 .update({ title, description })
@@ -70,21 +43,18 @@ export async function POST(request: NextRequest) {
                 .single();
 
             if (updateError) {
-                console.error("Error updating event:", updateError.message);
                 return NextResponse.json({ error: 'Failed to update event' }, { status: 500 });
             }
 
             event = data;
         } else {
-            // Create a new event
             const { data, error: createError } = await supabase
                 .from('event')
-                .insert([{ title, date, description, userId }])
+                .insert([{ title, date, description, user_id }])
                 .select()
                 .single();
 
             if (createError) {
-                console.error("Error creating event:", createError.message);
                 return NextResponse.json({ error: 'Failed to create event' }, { status: 500 });
             }
 
@@ -93,35 +63,6 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({ status: 201, event, message: 'success' });
     } catch (error) {
-        console.error('Error creating/updating event:', error);
         return NextResponse.json({ status: 500, message: 'error', error: 'Failed to create/update event' });
-    }
-}
-
-export async function DELETE(request: NextRequest) {
-    try {
-        // Parse request body
-        const { date, userId } = await request.json();
-
-        // Get the start and end of the day for the given date
-        const startOfDayDate = startOfDay(new Date(date));
-        const endOfDayDate = endOfDay(new Date(date));
-
-        const { error } = await supabase
-            .from('event')
-            .delete()
-            .eq('userId', userId)
-            .gte('date', startOfDayDate.toISOString())
-            .lt('date', endOfDayDate.toISOString());
-
-        if (error) {
-            console.error("Error deleting event:", error.message);
-            return NextResponse.json({ error: 'Failed to delete event' }, { status: 500 });
-        }
-
-        return NextResponse.json({ status: 201, message: 'success' });
-    } catch (error) {
-        console.error('Error deleting event:', error);
-        return NextResponse.json({ status: 500, message: 'error', error: 'Failed to delete event' });
     }
 }

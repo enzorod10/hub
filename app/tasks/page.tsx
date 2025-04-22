@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Task, TaskType, Priority } from "@/app/types";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/lib/supabase/supabaseClient";
 
 export default function Tasks() {
   const [tasks, setTasks] = useState<Task[]>([]);

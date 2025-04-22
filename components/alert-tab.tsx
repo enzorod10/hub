@@ -25,7 +25,7 @@ export default function AlertTab() {
 
     return (
       <div className="flex w-full justify-between border border-red-500 border-4 p-3 bg-gray-100 text-secondary">
-        <div className="relative flex-1 overflow-x-hidden border">
+        {/* <div className="relative flex-1 overflow-x-hidden border">
             <div
                 ref={marqueeRef}
                 className="whitespace-nowrap flex gap-4"
@@ -36,7 +36,7 @@ export default function AlertTab() {
         </div>
         <div className='w-48 border'>
             2nd part
-        </div>
+        </div> */}
       </div>
     );
 }

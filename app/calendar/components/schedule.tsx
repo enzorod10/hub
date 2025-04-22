@@ -12,9 +12,8 @@ export const Schedule = () => {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
 
-  console.log({ id: user.id})
   return(
-    <EventProvider userId={user.id} >
+    <EventProvider user_id={user.id} >
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-4 items-center">
           <Calendar/>

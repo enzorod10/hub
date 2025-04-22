@@ -7,7 +7,7 @@ interface EventContextState {
   setDateClicked: (date: Date) => void;
   openEditor: boolean;
   setOpenEditor: (open: boolean) => void;
-  userId: string;
+  user_id: string;
   events: Event[];
   setEvents: React.Dispatch<React.SetStateAction<Event[]>>;
   fetchEventsForMonth: (year: number, month: number) => void;
@@ -15,7 +15,7 @@ interface EventContextState {
 
 const EventContext = createContext<EventContextState | undefined>(undefined);
 
-export const EventProvider: React.FC<{ userId: string, children: React.ReactNode }> = ({ userId, children }) => {
+export const EventProvider: React.FC<{ user_id: string, children: React.ReactNode }> = ({ user_id, children }) => {
   const [dateClicked, setDateClicked] = useState<Date | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
   const [loadedMonths, setLoadedMonths] = useState<{ [key: string]: boolean }>({});
@@ -25,9 +25,8 @@ export const EventProvider: React.FC<{ userId: string, children: React.ReactNode
     const key = `${year}-${month}`;
     if (loadedMonths[key]) return; // Avoid fetching if already loaded
 
-    console.log({userId})
     try {
-      const response = await fetch(`/api/events?year=${year}&month=${month}&userId=${userId}`);
+      const response = await fetch(`/api/events?year=${year}&month=${month}&user_id=${user_id}`);
       if (!response.ok) {
         throw new Error('Failed to fetch events');
       }
@@ -54,10 +53,10 @@ export const EventProvider: React.FC<{ userId: string, children: React.ReactNode
     const month = new Date().getMonth() + 1;
     fetchEventsForMonth(year, month);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId]);
+  }, [user_id]);
 
   return (
-    <EventContext.Provider value={{ dateClicked, setDateClicked, openEditor, setOpenEditor, userId, events, setEvents, fetchEventsForMonth }}>
+    <EventContext.Provider value={{ dateClicked, setDateClicked, openEditor, setOpenEditor, user_id, events, setEvents, fetchEventsForMonth }}>
       {children}
     </EventContext.Provider>
   );

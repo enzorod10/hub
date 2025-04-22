@@ -21,10 +21,10 @@ export interface Prompt{
 export interface Event {
     id: number;
     title: string;
+    date: Date
     description: string;
-    date: Date;
     completed: boolean;
-    userId: string;
+    user_id: string;
 }
 
 export interface User {

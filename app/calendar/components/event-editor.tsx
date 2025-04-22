@@ -7,9 +7,9 @@ import {
 import { format } from 'date-fns';
 
 type EventEditorProps = {
-  onSubmit: (data: { title: string, userId: string, date: Date, description: string }, formattedDate: string, action: 'created' | 'updated' | 'deleted') => void;
-  handleDeleteEvent: (data: { userId: string, date: Date }, formattedDate: string) => void;
-  event?: { title: string, date: Date, description: string, userId: string };
+  onSubmit: (data: { title: string, user_id: string, date: Date, description: string }, formattedDate: string, action: 'created' | 'updated' | 'deleted') => void;
+  handleDeleteEvent: (data: { user_id: string, date: Date }, formattedDate: string) => void;
+  event?: { title: string, date: Date, description: string, user_id: string };
   date: Date;
 }
 
@@ -21,7 +21,7 @@ interface TimeBlockState {
 
 const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorProps) => {
   const divRef = useRef<null | HTMLDivElement>(null);
-  const { openEditor, setOpenEditor, userId } = useEventContext();
+  const { openEditor, setOpenEditor, user_id } = useEventContext();
   const [newBlockAdded, setNewBlockAdded] = useState(false);
   const [title, setTitle] = useState(event?.title ?? "")
 
@@ -132,7 +132,7 @@ const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorPr
     // Format each time block and join them with delimiters
     const formattedDescription = timeBlocks.map(formatTimeBlock).join('');
 
-    onSubmit({ userId, title, date, description: formattedDescription }, format(date, 'PPPP'), event ? 'updated' : 'created')
+    onSubmit({ user_id, title, date, description: formattedDescription }, format(date, 'PPPP'), event ? 'updated' : 'created')
   }
 
   return (
@@ -177,7 +177,7 @@ const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorPr
             +
           </Button>
           <div className={`flex ${event ? 'justify-between' : 'justify-end'}`}>
-            {event && <Button onClick={() => handleDeleteEvent({ userId, date }, format(date, 'PPPP'))} type="button" variant="destructive">Delete</Button>}
+            {event && <Button onClick={() => handleDeleteEvent({ user_id, date }, format(date, 'PPPP'))} type="button" variant="destructive">Delete</Button>}
             <Button type="submit" className='me-2'>{event ? 'Update' : 'Create'}</Button>
           </div>
         </form>

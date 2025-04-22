@@ -15,7 +15,8 @@ const AdminPanel = () => {
       return eventDate.toDateString() === (dateClicked ? dateClicked.toDateString() : new Date().toDateString());
   });
 
-  const handleAddEvent = async (data: { userId: string, title: string, date: Date, description: string }, formattedDate: string, action: 'created' | 'updated' | 'deleted') => {
+  const handleAddEvent = async (data: { user_id: string, title: string, date: Date, description: string }, formattedDate: string, action: 'created' | 'updated' | 'deleted') => {
+    console.log({data, formattedDate, action});
     try {
       const response = await fetch('/api/events', {
         method: 'POST',
@@ -50,7 +51,7 @@ const AdminPanel = () => {
         const existingEventIndex = prevEvents.findIndex(
           (event) =>
             isWithinInterval(new Date(event.date), { start: startOfDayDate, end: endOfDayDate }) &&
-            event.userId === data.userId
+            event.user_id === data.user_id
         );
 
         if (existingEventIndex !== -1) {
@@ -73,7 +74,7 @@ const AdminPanel = () => {
     }
   };
 
-  const handleDeleteEvent = async (data: { userId: string, date: Date }, formattedDate: string) => {
+  const handleDeleteEvent = async (data: { user_id: string, date: Date }, formattedDate: string) => {
     try {
       const response = await fetch('/api/events', {
         method: 'DELETE',
@@ -108,7 +109,7 @@ const AdminPanel = () => {
         return prevEvents.filter(
           (event) =>
             !(isWithinInterval(new Date(event.date), { start: startOfDayDate, end: endOfDayDate }) &&
-            event.userId === data.userId)
+            event.user_id === data.user_id)
         );
       });
     } catch (error) {

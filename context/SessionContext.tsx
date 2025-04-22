@@ -1,5 +1,5 @@
 'use client';
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/lib/supabase/supabaseClient";
 import { useEffect, createContext, useState, useContext } from "react"
 import { User } from "@/app/types";
 

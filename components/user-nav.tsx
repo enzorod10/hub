@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useSessionContext } from "@/context/SessionContext";
 import Link from "next/link";
-import { supabase } from '@/lib/supabaseClient'; // Ensure you have this file to create the supabase client
+import { supabase } from '@/lib/supabase/supabaseClient'; // Ensure you have this file to create the supabase client
 
 export function UserNav() {
   const session = useSessionContext();
