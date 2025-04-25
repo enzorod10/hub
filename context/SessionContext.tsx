@@ -4,7 +4,7 @@ import { useEffect, createContext, useState, useContext } from "react"
 import { User } from "@/app/types";
 
 const SessionContext = createContext<{ user: User | null, 
-  updateSession: (updatedSession) => void, loading: boolean}>
+  updateSession: () => void, loading: boolean}>
   ({ user: null, updateSession: () => {}, 
   loading: false});
 
@@ -39,8 +39,22 @@ export function SessionWrapper({ children } : {
   }, [])
 
   // Function to update user
-  const updateSession = (newSession) => {
-    setSession(newSession);
+  const updateSession = async () => {
+    console.log('Updating session...');
+    setLoading(true);
+    const { data: user, error } = await supabase
+      .from('profile')
+      .select('*')
+      .eq('id', session?.id)
+      .single();
+    
+    if (!error && user) {
+      console.log("User profile updated:", user);
+      setSession(user);
+    } else {
+      console.error("Error fetching user profile:", error);
+    }
+    setLoading(false);
   };
 
 

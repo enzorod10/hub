@@ -4,7 +4,6 @@ import { createClient } from '@/utils/supabase/server';
 
 export async function GET(request: NextRequest) {
     const supabase = await createClient();
-    console.log(await supabase.auth.getUser())
 
     const year = Number(request.nextUrl.searchParams.get('year'));
     const month = Number(request.nextUrl.searchParams.get('month'));

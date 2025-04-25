@@ -13,6 +13,7 @@ const Calendar = () => {
     const [monthMapped, setMonthMapped] = useState<(Date | undefined)[] | undefined >()
     const daysOfTheWeek = [ 'Sun.', 'Mon.', 'Tues.', 'Wed.', 'Thurs.', 'Fri.', 'Sat.' ];
 
+
     const { fetchEventsForMonth, events, setDateClicked } = useEventContext(); 
 
     useEffect(() => {
