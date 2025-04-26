@@ -7,6 +7,7 @@ import Header from "@/components/header";
 import { SessionWrapper } from "@/context/SessionContext";
 import { ThemeProvider } from "@/components/theme-provider"
 import AlertTab from "@/components/alert-tab";
+import PortableAI from "@/components/ai/portable-ai";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -47,7 +48,10 @@ export default function RootLayout({
               <AlertTab />
               <div className="flex">
                 <Nav />
-                {children}
+                <div className="flex-1 p-4 relative">
+                  {children}
+                  <PortableAI />
+                </div>
               </div>
             </div>
           </SessionWrapper>

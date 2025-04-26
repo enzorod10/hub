@@ -114,7 +114,7 @@ const Event = () => {
         return(
             <Card ref={eventDiv} className="w-full sm:max-w-fit">
                 <CardHeader>
-                        <CardTitle>No Stream Scheduled</CardTitle>
+                        <CardTitle>Nothing Scheduled</CardTitle>
                         <CardDescription>
                             {format(dateClicked ? dateClicked : new Date(), 'PPPP') + ' '}
                         </CardDescription>

@@ -4,6 +4,8 @@ import { NextResponse } from "next/server";
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
 
+  console.log(searchParams);
+
   // Extract auth code and optional redirect path
   const code = searchParams.get("code");
   const next = searchParams.get("next") ?? "/";
@@ -13,7 +15,6 @@ export async function GET(request: Request) {
 
     // Exchange the auth code for a session
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
-    console.log({data, error});
 
     if (!error) {
       console.log('Auth code exchange successful');

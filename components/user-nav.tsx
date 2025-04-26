@@ -12,9 +12,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useSessionContext } from "@/context/SessionContext";
 import Link from "next/link";
-import { supabase } from '@/utils/supabase/client';
+import { createClient } from '@/utils/supabase/client';
+
 
 export function UserNav() {
+  const supabase = createClient();
   const session = useSessionContext();
 
   if (session.user) {

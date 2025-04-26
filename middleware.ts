@@ -1,11 +1,26 @@
-import { type NextRequest } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { updateSession } from './utils/supabase/middleware'
 
 export async function middleware(request: NextRequest) {
-  console.log('Running middleware for Supabase session update...')
-  return await updateSession(request)
+  if (request.method === 'OPTIONS') {
+    // Handle CORS preflight request by returning a response with the appropriate headers
+    const response = new NextResponse(null, {
+      status: 204, // No Content
+      headers: {
+        'Access-Control-Allow-Origin': '*', // You can change '*' to a specific origin like 'https://www.kickrealm.com'
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      },
+    });
+    return response;
+  }
+
+  // Continue with the normal request processing
+  return await updateSession(request);
 }
 
 export const config = {
-  matcher: ['/((?!.*\\.).*)'], // matches everything except static files
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
 }

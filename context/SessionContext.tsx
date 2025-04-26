@@ -1,5 +1,5 @@
 'use client';
-import { supabase } from "@/utils/supabase/client";
+import { createClient } from "@/utils/supabase/client";
 import { useEffect, createContext, useState, useContext } from "react"
 import { User } from "@/app/types";
 
@@ -7,6 +7,9 @@ const SessionContext = createContext<{ user: User | null,
   updateSession: () => void, loading: boolean}>
   ({ user: null, updateSession: () => {}, 
   loading: false});
+  
+const supabase = createClient();
+
 
 export function SessionWrapper({ children } : {
   children: React.ReactNode;
@@ -40,7 +43,6 @@ export function SessionWrapper({ children } : {
 
   // Function to update user
   const updateSession = async () => {
-    console.log('Updating session...');
     setLoading(true);
     const { data: user, error } = await supabase
       .from('profile')
@@ -49,7 +51,6 @@ export function SessionWrapper({ children } : {
       .single();
     
     if (!error && user) {
-      console.log("User profile updated:", user);
       setSession(user);
     } else {
       console.error("Error fetching user profile:", error);

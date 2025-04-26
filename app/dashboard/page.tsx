@@ -1,4 +1,4 @@
-import ChatPage from "./components/ai-chat";
+// import ChatPage from "./components/ai-chat";
 import Weather from "./components/weather";
 import Welcome from "./components/welcome";
 
@@ -8,7 +8,7 @@ export default function Home() {
             <div className="border rounded-md w-full">
                 <Welcome/>
                 <Weather />
-                <ChatPage />
+                {/* <ChatPage /> */}
             </div>
             
         </div>
