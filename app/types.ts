@@ -19,7 +19,7 @@ export interface Prompt{
 }
 
 export interface Event {
-    id: number;
+    id: string;
     title: string;
     date: Date
     description: string;
