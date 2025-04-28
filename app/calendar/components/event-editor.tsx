@@ -15,7 +15,7 @@ type EventEditorProps = {
 
 interface TimeBlockState {
   timeBlockText: string[];
-  timeDefinition: string[];
+  timeDefinition: string;
   description: string;
 }
 
@@ -26,7 +26,7 @@ const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorPr
   const [title, setTitle] = useState(event?.title ?? "")
 
   const [timeBlocks, setTimeBlocks] = useState<TimeBlockState[]>([
-    { timeBlockText: ['', '', '', ''], timeDefinition: ['PM', 'PM'], description: '' },
+    { timeBlockText: ['', '', '', ''], timeDefinition: 'PM', description: '' },
   ]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, type: string, index: number, subIndex: number, forcedValue?: string) => {
@@ -41,7 +41,7 @@ const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorPr
     setTimeBlocks(updatedBlocks);
   };
 
-  const setTimeDefinition = (index: number, newTimeDefinition: string[]) => {
+  const setTimeDefinition = (index: number, newTimeDefinition: string) => {
     const updatedBlocks = [...timeBlocks];
     updatedBlocks[index].timeDefinition = newTimeDefinition;
     setTimeBlocks(updatedBlocks);
@@ -57,7 +57,7 @@ const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorPr
     setNewBlockAdded(true);
     const newTimeBlock: TimeBlockState = {
       timeBlockText: ['', '', '', ''],
-      timeDefinition: ['PM', 'PM'],
+      timeDefinition: 'PM',
       description: ''
     };
     setTimeBlocks([...timeBlocks, newTimeBlock]);
@@ -86,17 +86,15 @@ const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorPr
 
         for (let i = 0; i < matches.length; i += 2) {
           // Extract start time and end time
-          const [startTime, endTime] = matches[i].split(' - ');
-          const [startHour, startMinute, startPeriod] = startTime.split(/:| /);
-          const [endHour, endMinute, endPeriod] = endTime.split(/:| /);
+          const [startHour, startMinute, startPeriod] = matches[i].split(/:| /);
         
           // Extract description
           const description = matches[i + 1];
         
           // Push the time block information into the timeBlocks array
           timeBlocksTemp.push({
-            timeBlockText: [startHour, startMinute, endHour, endMinute],
-            timeDefinition: [startPeriod, endPeriod],
+            timeBlockText: [startHour, startMinute],
+            timeDefinition: startPeriod,
             description: description
           });
         }
@@ -123,10 +121,9 @@ const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorPr
     e.preventDefault();
     // Function to format a single time block
     const formatTimeBlock: (timeBlock: TimeBlockState) => string = (timeBlock) => {
-      const startTime = `${timeBlock.timeBlockText[0]}:${timeBlock.timeBlockText[1]} ${timeBlock.timeDefinition[0]}`;
-      const endTime = `${timeBlock.timeBlockText[2]}:${timeBlock.timeBlockText[3]} ${timeBlock.timeDefinition[1]}`;
+      const startTime = `${timeBlock.timeBlockText[0]}:${timeBlock.timeBlockText[1]} ${timeBlock.timeDefinition}`;
       const description = timeBlock.description;
-      return `##DELIM## ${startTime} - ${endTime} ##DELIM## ##DELIM## ${description} ##DELIM## `;
+      return `##DELIM## ${startTime} ##DELIM## ##DELIM## ${description} ##DELIM## `;
     };
 
     // Format each time block and join them with delimiters
@@ -194,10 +191,10 @@ import { useEventContext } from '@/context/EventContext';
 
 interface TimeBlockProps {
   timeBlockText: string[];
-  timeDefinition: string[];
+  timeDefinition: string;
   timeBlockDescription: string;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>, type: string, index: number, subIndex: number, forcedValue?: string) => void;
-  setTimeDefinition: (index: number, newTimeDefinition: string[]) => void;
+  setTimeDefinition: (index: number, newTimeDefinition: string) => void;
   setTimeBlockDescription: (e: React.ChangeEvent<HTMLInputElement>, index: number) => void;
   removeTimeBlock: (index: number) => void;
   index: number;
@@ -207,7 +204,6 @@ const TimeBlock: React.FC<TimeBlockProps>= ({ timeBlockText, timeDefinition, tim
   return (
     <div className='relative flex flex-wrap border rounded gap-3 p-2 justify-evenly' >
       <div>
-      <span className="text-muted-foreground w-max text-sm">From</span>
         <div className='flex items-center gap-2'>
         <Input
           required
@@ -229,35 +225,10 @@ const TimeBlock: React.FC<TimeBlockProps>= ({ timeBlockText, timeDefinition, tim
             onChange={(e) => handleInputChange(e, 'from', index, 1)}
             onBlur={(e) => e.target.value && ((Number(e.target.value) < 10 && e.target.value.length <= 1) && handleInputChange(e, 'from', index, 1, '0' + e.target.value ))}
           />
-          <Button tabIndex={-1} type='button' onClick={() => setTimeDefinition(index, [timeDefinition[0] === 'PM' ? 'AM' : 'PM', timeDefinition[1]])}> {timeDefinition[0]} </Button>
+          <Button tabIndex={-1} type='button' onClick={() => setTimeDefinition(index, timeDefinition === 'PM' ? 'AM' : 'PM')}> {timeDefinition} </Button>
         </div>
       </div>
-      <div>
-      <span className="text-muted-foreground w-max text-sm">To</span>
-        <div className='flex items-center gap-2'>
-         <Input
-          required
-            value={timeBlockText[2]}
-            type="number"
-            className="text-md w-12 p-0 text-center"
-            min="1"
-            max="12"
-            onChange={(e) => handleInputChange(e, 'to', index, 2)}
-          />
-          : 
-          <Input
-            required
-            value={timeBlockText[3]}
-            type="number"
-            className="text-md w-12 p-0 text-center"
-            min="0"
-            max="59"
-            onChange={(e) => handleInputChange(e, 'to', index, 3)}
-            onBlur={(e) => e.target.value && ((Number(e.target.value) < 10 && e.target.value.length <= 1) && handleInputChange(e, 'to', index, 3, '0' + e.target.value ))}
-          />
-          <Button tabIndex={-1} type='button' onClick={() => setTimeDefinition(index, [timeDefinition[0], timeDefinition[1] === 'PM' ? 'AM' : 'PM'])}> {timeDefinition[1]} </Button>
-        </div>
-      </div>
+      
       <Input 
         required
         placeholder='Activities during this time block...' 

@@ -56,20 +56,17 @@ const Calendar = () => {
 
     const getEventStatusColor = (event?: Event) => {
         if (!event) return ''; // No event, no dot
-        if (event.completed){
-            return 'bg-green-500'
-        }
         if (isToday(new Date(event.date))) {
-            return 'bg-orange-500'; // Event is ongoing
+            return 'bg-green-500'; // Event is ongoing
         } else if (isBefore(new Date(event.date), new Date())) {
-            return event.completed ? 'bg-green-500' : 'bg-red-500'; // Event happened or didn't happen
+            return 'bg-gray-500 opacity-40'; // Event passed
         } else if (isAfter(new Date(event.date), new Date())) {
-            return 'bg-orange-500'; // Event will happen
+            return 'bg-orange-500 opacity-40'; // Event will happen
         }
       };
 
     return(
-        <div className="max-w-2xl w-full min-w-max h-fit flex flex-col border rounded pb-2">
+        <div className="flex-1 max-w-lg min-w-max h-fit flex flex-col border rounded pb-2">
             <div className='flex items-center py-2 select-none'>
                 <div className="flex-1 text-center cursor-pointer" onClick={() => handleMonthChange('prev')}>
                     {'<'}

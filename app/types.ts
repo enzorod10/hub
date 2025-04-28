@@ -23,12 +23,14 @@ export interface Event {
     title: string;
     date: Date
     description: string;
-    completed: boolean;
     user_id: string;
 }
 
 export interface User {
     id: string;
+    name: string;
+    interests: string[];
+
 }
 
 

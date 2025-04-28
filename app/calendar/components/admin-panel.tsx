@@ -16,7 +16,6 @@ const AdminPanel = () => {
   });
 
   const handleAddEvent = async (data: { user_id: string, title: string, date: Date, description: string }, formattedDate: string, action: 'created' | 'updated' | 'deleted') => {
-    console.log({data, formattedDate, action});
     try {
       const response = await fetch('/api/events', {
         method: 'POST',

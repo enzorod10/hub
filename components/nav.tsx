@@ -8,7 +8,7 @@ function Nav(){
     const pathname = usePathname();
     if (!['/'].includes(pathname)){
         return (
-            <div className="flex flex-col">
+            <div className="hidden sm:flex flex-col ">
                 {navItems.map((item) => {
                     return (
                         <Link key={item.id} href={

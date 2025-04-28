@@ -4,19 +4,16 @@ import {
     Card,
     CardContent,
     CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
   } from "@/components/ui/card"
 import { useEventContext } from "@/context/EventContext";
 import { Pencil } from "lucide-react";
-import { format, isBefore, isAfter, isToday } from 'date-fns';
-import { Switch } from "@/components/ui/switch"
-import { useEffect, useRef, useState } from "react";
-// import { toggleEventCompletion } from "@/app/actions";
+import { format } from 'date-fns';
+import { useRef } from "react";
 
 const Event = () => {
-    const { dateClicked, events, setOpenEditor, setEvents } = useEventContext();
+    const { dateClicked, events, setOpenEditor } = useEventContext();
     const eventDiv = useRef<HTMLDivElement | null>(null);
 
     // Filter events for the clicked date
@@ -24,8 +21,6 @@ const Event = () => {
         const eventDate = new Date(event.date);
         return eventDate.toDateString() === (dateClicked ? dateClicked.toDateString() : new Date().toDateString());
     });
-
-    const [complete, setComplete] = useState(false);
 
     const parsedDescription = () => {
         if (clickedDateEvents[0].description){
@@ -38,49 +33,13 @@ const Event = () => {
         }
     };
 
-    const handleEventCompletionChange = () => {
-        setComplete(!complete)
-        // handleEventCompletion(!complete)
-    }
-
-    // const handleEventCompletion = async (completed: boolean) => {
-    //     const result = await toggleEventCompletion(clickedDateEvents[0].id, completed)
-    //     if (result){
-    //         setEvents((prevEvents) => prevEvents.map((event) => event.id === result.id ? { ...event, completed} : event));
-    //     }
-    // }
-
-    const grabStatus = () => {
-        if (clickedDateEvents[0]){
-            if (clickedDateEvents[0].completed){
-                return 'Event happened'
-            }
-            if (isToday(clickedDateEvents[0].date)) {
-                return 'Event is scheduled for today';
-            } else if (isBefore(clickedDateEvents[0].date, new Date())) {
-                return clickedDateEvents[0].completed ? 'Event happened' : 'Event did not happen';
-            } else if (isAfter(clickedDateEvents[0].date, new Date())) {
-                return 'Event has not happened yet';
-            } 
-        }
-    }
-
-    useEffect(() => {
-        dateClicked && eventDiv.current?.scrollIntoView({ behavior: "smooth", block: "start", inline: "end" });
-        if (clickedDateEvents.length > 0 && !isAfter(clickedDateEvents[0].date, new Date())){
-            clickedDateEvents[0].completed ? setComplete(true) : setComplete(false)
-        }
-    }, [clickedDateEvents, dateClicked])
-
     if (clickedDateEvents.length > 0){
         return (
-            <Card ref={eventDiv} className="relative w-full max-w-lg">
+            <Card ref={eventDiv} className="relative flex-1 max-w-lg">
                 <CardHeader>
                     <CardTitle>{clickedDateEvents[0].title}</CardTitle>
                     <CardDescription>
                         {format(clickedDateEvents[0].date, 'PPPP') + ' '}
-                        {clickedDateEvents[0].description && 
-                        '@ ' + clickedDateEvents[0].description.split('##DELIM##')[1].trim().split(' - ')[0].trim()}
                     </CardDescription>
                 </CardHeader>
                 {clickedDateEvents[0].description &&
@@ -98,21 +57,12 @@ const Event = () => {
                             )
                 })}
                     </CardContent>}
-                <CardFooter >
-                    <span className='text-sm text-muted-foreground flex justify-between w-full'>
-                        {grabStatus()}
-                        {
-                            !isAfter(clickedDateEvents[0].date, new Date()) &&
-                            <Switch checked={complete} onCheckedChange={handleEventCompletionChange}/>
-                        }
-                    </span>
-                </CardFooter>
                 <Pencil onClick={() => setOpenEditor(true)} width={16} height={16} className="absolute top-2 right-2 cursor-pointer"/>
             </Card>
         )
     } else {
         return(
-            <Card ref={eventDiv} className="w-full sm:max-w-fit">
+            <Card ref={eventDiv} className="flex-1 sm:max-w-fit">
                 <CardHeader>
                         <CardTitle>Nothing Scheduled</CardTitle>
                         <CardDescription>

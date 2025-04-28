@@ -24,7 +24,10 @@ const CellWithDate = ({ date, id, setDateClicked, dotColor }: AppProps) => {
             <p className="text-xs sm:text-sm">
                 {getDate(date!)}
             </p>
-            {<div className={`absolute bottom-0 right-0 h-2 w-2 ${dotColor} rounded-full`}></div>}
+            {<div className={`div absolute flex w-full h-full justify-center items-center top-0 left-0`}>
+                <div className={`absolute h-1.5 w-6 ${dotColor} rounded-full`}>
+                </div>
+            </div>}
         </div>
     )
 }
