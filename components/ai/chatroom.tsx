@@ -1,38 +1,37 @@
 'use client';
 
 import { useState } from "react";
+import { User } from "@/app/types";
+import { useAiContext } from "@/context/AiContext";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 
-export const Chatroom = () => {
-    const [messages, setMessages] = useState([
-        { role: "system", content: "You are a helpful assistant." }
-      ]);
-      const [input, setInput] = useState("");
-      const [loading, setLoading] = useState(false);
+export const Chatroom = ({ user }: { user: User }) => {
+    const [input, setInput] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    const { context, handleSchedule } = useAiContext();
     
-      const sendMessage = async () => {
+    const handleSend = () => {
         if (!input.trim()) return;
-    
-        const newMessages = [...messages, { role: "user", content: input }];
-        setMessages(newMessages);
-        setInput("");
+
         setLoading(true);
-    
-        const res = await fetch("/api/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messages: newMessages }),
-        });
-    
-        const data = await res.json();
-        setMessages([...newMessages, { role: "assistant", content: data.reply }]);
-        setLoading(false);
-      };
+        handleSchedule({ user, userMessage: input })
+            .then(() => {
+                setInput("");
+            })
+            .catch((error) => {
+                console.error("Error sending message:", error);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }
       
     return(
-        <div className="w-full">
-            <h1 className="text-xl font-bold mb-4">AI Chatroom</h1>
-            <div className="border rounded p-2 h-96 overflow-y-auto bg-gray-50 mb-2">
-            {messages
+        <div className="flex flex-col h-full w-full">
+            <div className="border flex-1 rounded p-2 bg-gray-50 mb-2 overflow-hidden">
+            {context.displayMessages
                 .filter((m) => m.role !== "system")
                 .map((msg, i) => (
                 <div key={i} className={`mb-2 ${msg.role === "user" ? "text-right" : "text-left"}`}>
@@ -47,21 +46,22 @@ export const Chatroom = () => {
                 ))}
             </div>
 
-            <div className="flex gap-2">
-            <input
-                className="border rounded w-full p-2"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                disabled={loading}
-            />
-            <button
-                className="bg-blue-500 text-white px-4 py-2 rounded"
-                onClick={sendMessage}
-                disabled={loading}
-            >
-                Send
-            </button>
+            <div className="flex gap-2 ">
+                <Input 
+                    className="text-primary-foreground"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                    disabled={loading}
+                />
+                <Button
+                    variant="outline"
+                    onClick={handleSend}
+                    disabled={loading}
+                >
+                    Send
+                </Button>
+                
             </div>
         </div>
     );

@@ -1,4 +1,5 @@
 'use client';
+import { useAiContext } from '@/context/AiContext';
 import React, { useEffect, useRef, useState } from 'react';
 
 const matches = ["Redsox 10 - Yankees 2",
@@ -8,16 +9,19 @@ const matches = ["Redsox 10 - Yankees 2",
     "Marquees 1 - Tlorense 2"] 
 
 export default function AlertTab() {
-    
+
+    const { toggleAi, setToggleAi } = useAiContext();
+
     const marqueeRef = useRef<HTMLDivElement | null>(null);
     const [duration, setDuration] = useState(40); // seconds
+    
 
     useEffect(() => {
         const el = marqueeRef.current;
         if (el) {
             const contentWidth = el.scrollWidth;
             const containerWidth = el.parentElement!.offsetWidth;
-            const speed = 80; // pixels per second
+            const speed = 10; // pixels per second
             const newDuration = (contentWidth + containerWidth) / speed;
             setDuration(newDuration);
         }
@@ -25,7 +29,7 @@ export default function AlertTab() {
 
     return (
       <div className="flex w-full justify-between border border-red-500 border-4 p-3 bg-gray-100 text-secondary">
-        {/* <div className="relative flex-1 overflow-x-hidden border">
+        <div className="relative flex-1 overflow-x-hidden border">
             <div
                 ref={marqueeRef}
                 className="whitespace-nowrap flex gap-4"
@@ -35,8 +39,11 @@ export default function AlertTab() {
             </div>
         </div>
         <div className='w-48 border'>
+            <span onClick={() => setToggleAi(prev => !prev)} className={`${toggleAi ? 'bg-cyan-300' : 'bg-slate-200' } mx-2 text-red-500 font-bold px-2 rounded`}>
+                AI
+            </span>
             2nd part
-        </div> */}
+        </div>
       </div>
     );
 }

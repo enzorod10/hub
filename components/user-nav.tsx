@@ -37,10 +37,14 @@ export function UserNav() {
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
               <p className="text-sm font-medium leading-none">
-                Username
+                {session.user.name ?? 'Username'}
               </p>
               <p className="text-xs leading-none text-muted-foreground">
-                Joined April 11, 2025
+                Joined {new Date(session.user.created_at).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
               </p>
             </div>
           </DropdownMenuLabel>

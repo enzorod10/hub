@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { AiTest } from "@/components/Ai";
-import Nav from "@/components/nav";
 import Header from "@/components/header";
 import { SessionWrapper } from "@/context/SessionContext";
 import { ThemeProvider } from "@/components/theme-provider"
 import AlertTab from "@/components/alert-tab";
 import PortableAI from "@/components/ai/portable-ai";
+import Sidebar from "@/components/sidebar";
+import { EventProvider } from "@/context/EventContext";
+import { AiWrapper } from "@/context/AiContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,7 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased h-100dvh overflow-hidden`}
       >
         <ThemeProvider
           attribute="class"
@@ -43,17 +44,21 @@ export default function RootLayout({
           disableTransitionOnChange>
 
           <SessionWrapper>
-            <div className="flex flex-col">
-              <Header />
-              <AlertTab />
-              <div className="flex">
-                <Nav />
-                <div className="flex-1 p-4 relative">
-                  {children}
-                  <PortableAI />
+            <EventProvider>
+              <AiWrapper>
+                <div className="flex flex-col">
+                  <Header />
+                  <AlertTab />
+                  <div className="flex relative h-[calc(100dvh-114px)]">
+                    <Sidebar />
+                    <div className="flex-1 p-4 relative h-[calc(100dvh-114px)] overflow-auto">
+                      {children}
+                    </div>
+                    <PortableAI />
+                  </div>
                 </div>
-              </div>
-            </div>
+              </AiWrapper>
+            </EventProvider>
           </SessionWrapper>
         </ThemeProvider>
 

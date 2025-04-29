@@ -123,7 +123,7 @@ const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorPr
     const formatTimeBlock: (timeBlock: TimeBlockState) => string = (timeBlock) => {
       const startTime = `${timeBlock.timeBlockText[0]}:${timeBlock.timeBlockText[1]} ${timeBlock.timeDefinition}`;
       const description = timeBlock.description;
-      return `##DELIM## ${startTime} ##DELIM## ##DELIM## ${description} ##DELIM## `;
+      return `##DELIM## ${startTime} ##DELIM## ${description}`;
     };
 
     // Format each time block and join them with delimiters

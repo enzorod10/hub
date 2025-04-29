@@ -1,20 +1,13 @@
-type NavItem = {
-    id: number;
-    name: string,
-    href: string,
-    icon: string
-}
+import { NavItem } from "@/app/types";
 
 export const navItems: NavItem[] = [
     { 
-        id: 0,
-        name: 'Dashboard',
+        title: 'Dashboard',
         href: '/dashboard',
-        icon: 'Dashboard'
+        icon: 'dashboard'
     },
     {
-        id: 1,
-        name: 'Calendar',
+        title: 'Calendar',
         href: '/calendar',
         icon: 'calendar'
     }

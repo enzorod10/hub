@@ -66,7 +66,7 @@ const Calendar = () => {
       };
 
     return(
-        <div className="flex-1 max-w-lg min-w-max h-fit flex flex-col border rounded pb-2">
+        <div className="flex-1 min-w-max h-fit flex flex-col border rounded pb-2">
             <div className='flex items-center py-2 select-none'>
                 <div className="flex-1 text-center cursor-pointer" onClick={() => handleMonthChange('prev')}>
                     {'<'}

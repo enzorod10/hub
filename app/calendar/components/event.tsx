@@ -11,11 +11,12 @@ import { useEventContext } from "@/context/EventContext";
 import { Pencil } from "lucide-react";
 import { format } from 'date-fns';
 import { useRef } from "react";
+import { useSessionContext } from "@/context/SessionContext";
 
 const Event = () => {
     const { dateClicked, events, setOpenEditor } = useEventContext();
+    const { user } = useSessionContext();
     const eventDiv = useRef<HTMLDivElement | null>(null);
-
     // Filter events for the clicked date
     const clickedDateEvents = events.filter(event => {
         const eventDate = new Date(event.date);
@@ -33,9 +34,10 @@ const Event = () => {
         }
     };
 
+
     if (clickedDateEvents.length > 0){
         return (
-            <Card ref={eventDiv} className="relative flex-1 max-w-lg">
+            <Card ref={eventDiv} className="relative flex-1 md:w-96 ">
                 <CardHeader>
                     <CardTitle>{clickedDateEvents[0].title}</CardTitle>
                     <CardDescription>
@@ -62,7 +64,7 @@ const Event = () => {
         )
     } else {
         return(
-            <Card ref={eventDiv} className="flex-1 sm:max-w-fit">
+            <Card ref={eventDiv} className="flex-1 md:w-96 ">
                 <CardHeader>
                         <CardTitle>Nothing Scheduled</CardTitle>
                         <CardDescription>

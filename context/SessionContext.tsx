@@ -4,12 +4,11 @@ import { useEffect, createContext, useState, useContext } from "react"
 import { User } from "@/app/types";
 
 const SessionContext = createContext<{ user: User | null, 
-  updateSession: () => void, loading: boolean}>
+  updateSession: () => void, loading: boolean }>(
   ({ user: null, updateSession: () => {}, 
-  loading: false});
+  loading: false}))
   
 const supabase = createClient();
-
 
 export function SessionWrapper({ children } : {
   children: React.ReactNode;
@@ -25,7 +24,7 @@ export function SessionWrapper({ children } : {
         } else if (session.user){
           const { data: user, error } = await supabase
             .from('profile')
-            .select('*')
+            .select('*, interests(*)')
             .eq('id', session.user.id)
             .single();
             console.log(error)
@@ -58,6 +57,7 @@ export function SessionWrapper({ children } : {
     setLoading(false);
   };
 
+  console.log(session)
 
   return (
     <SessionContext.Provider value={{user: session,
