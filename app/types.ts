@@ -17,20 +17,6 @@ export interface Context {
     messages: { role: string, content: string }[];
 }
 
-export interface Task{
-    id: string;
-    type: TaskType;
-    name: string;
-    priority: Priority;
-    done: boolean;
-}
-
-export interface Mood{
-    id: number;
-    type: MoodType;
-    emoji: string;
-}
-
 export interface Prompt{
     id: number;
     question: string;
@@ -50,13 +36,21 @@ export interface User {
     created_at: Date;
     name: string;
     interests: Interest[];
+    obligations: Obligation[];
+    goals: Goal[];
 }
 
 export interface Interest {
     id: string;
     name: string;
-  }
+}
 
-type MoodType = 'happy' | 'sad' | 'neutral';
-export type Priority = 'low' | 'medium' | 'high';
-export type TaskType = 'work' | 'personal' | 'other';
+export interface Obligation {
+    id: string;
+    name: string;
+}
+
+export interface Goal {
+    id: string;
+    name: string;
+}

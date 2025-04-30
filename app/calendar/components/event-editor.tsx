@@ -26,14 +26,14 @@ const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorPr
   const [title, setTitle] = useState(event?.title ?? "")
 
   const [timeBlocks, setTimeBlocks] = useState<TimeBlockState[]>([
-    { timeBlockText: ['', '', '', ''], timeDefinition: 'PM', description: '' },
+    { timeBlockText: ['', ''], timeDefinition: 'PM', description: '' },
   ]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, type: string, index: number, subIndex: number, forcedValue?: string) => {
-    if (subIndex === 0 || subIndex === 2){
+    if (subIndex === 0){
       if (Number(e.target.value) > 12 || e.target.value.length >= 3) return
     }
-    if (subIndex === 1 || subIndex === 3){
+    if (subIndex === 1){
       if (Number(e.target.value) > 59 || e.target.value.length >= 3) return
     }
     const updatedBlocks = [...timeBlocks];
@@ -56,7 +56,7 @@ const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorPr
   const addTimeBlock = () => {
     setNewBlockAdded(true);
     const newTimeBlock: TimeBlockState = {
-      timeBlockText: ['', '', '', ''],
+      timeBlockText: ['', ''],
       timeDefinition: 'PM',
       description: ''
     };
@@ -131,6 +131,8 @@ const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorPr
 
     onSubmit({ user_id, title, date, description: formattedDescription }, format(date, 'PPPP'), event ? 'updated' : 'created')
   }
+
+  console.log({timeBlocks})
 
   return (
     <AlertDialog onOpenChange={setOpenEditor} open={openEditor}>
