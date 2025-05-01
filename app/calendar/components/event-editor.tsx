@@ -70,42 +70,34 @@ const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorPr
   
 
   useEffect(() => {
-    if (openEditor) {
-      setTitle(event?.title || '')
-      if (event?.description){
-        // Regular expression to match text between ##DELIM## delimiters
-        const regex = /##DELIM##(.*?)##DELIM##/gs;
-        // Use match method to get all matches
-        const matches = [];
-        let match;
-        while ((match = regex.exec(event.description)) !== null) {
-          matches.push(match[1].trim());
-        }
+  if (openEditor) {
+    setTitle(event?.title || '');
+    if (event?.description) {
+      const regex = /##DELIM##\s*(.*?)\s*##DELIM##\s*(.*?)(?=(##DELIM##|$))/gs;
+      const matches = [];
+      let match;
+      while ((match = regex.exec(event.description)) !== null) {
+        const timeString = match[1].trim();        // e.g. "8:00 AM"
+        const description = match[2].trim();        // e.g. "Morning jog"
 
-        const timeBlocksTemp = [];
-
-        for (let i = 0; i < matches.length; i += 2) {
-          // Extract start time and end time
-          const [startHour, startMinute, startPeriod] = matches[i].split(/:| /);
-        
-          // Extract description
-          const description = matches[i + 1];
-        
-          // Push the time block information into the timeBlocks array
-          timeBlocksTemp.push({
-            timeBlockText: [startHour, startMinute],
-            timeDefinition: startPeriod,
-            description: description
+        const timeMatch = timeString.match(/(\d+):(\d+)\s*(AM|PM)/i);
+        if (timeMatch) {
+          const [, hour, minute, period] = timeMatch;
+          matches.push({
+            timeBlockText: [hour, minute],
+            timeDefinition: period.toUpperCase(),
+            description: description,
           });
         }
-
-        setTimeBlocks(timeBlocksTemp);
-      } else {
-        setTimeBlocks([])
       }
-      // Reset other form fields as needed
+
+      setTimeBlocks(matches);
+    } else {
+      setTimeBlocks([]);
     }
-  }, [openEditor, event]);
+  }
+}, [openEditor, event]);
+
 
   useEffect(() => {
     if (newBlockAdded && divRef.current) {
@@ -131,8 +123,6 @@ const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorPr
 
     onSubmit({ user_id, title, date, description: formattedDescription }, format(date, 'PPPP'), event ? 'updated' : 'created')
   }
-
-  console.log({timeBlocks})
 
   return (
     <AlertDialog onOpenChange={setOpenEditor} open={openEditor}>

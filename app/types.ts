@@ -11,10 +11,9 @@ export interface NavItem {
 
 export interface Context {
     type:  'general' | 'schedule';
-    subContext?: string;
-    activated?: boolean;
-    displayMessages: { role: string, content: string }[];
-    messages: { role: string, content: string }[];
+    subContext?: string | Date;
+    display_messages: { role: 'user' | 'assistant' | 'system', content: string }[];
+    messages: { role: 'user' | 'assistant' | 'system', content: string }[];
 }
 
 export interface Prompt{
@@ -29,6 +28,15 @@ export interface Event {
     date: Date
     description: string;
     user_id: string;
+    ai_event_record: AIEventRecord | null;
+}
+
+export interface AIEventRecord {
+    id: string;
+    user_id: string;
+    // target_date: Date;
+    display_messages: { role: 'user' | 'assistant' | 'system', content: string }[];
+    messages: { role: 'user' | 'assistant' | 'system', content: string }[];
 }
 
 export interface User {

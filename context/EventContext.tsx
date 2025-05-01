@@ -6,20 +6,20 @@ import { endOfDay, isWithinInterval, startOfDay } from 'date-fns';
 import { useSessionContext } from './SessionContext';
 
 interface EventContextState {
-  dateClicked: Date | null;
+  dateClicked: Date;
   setDateClicked: (date: Date) => void;
   openEditor: boolean;
   setOpenEditor: (open: boolean) => void;
   events: Event[];
   setEvents: React.Dispatch<React.SetStateAction<Event[]>>;
   fetchEventsForMonth: (year: number, month: number) => void;
-  addEvent: (data: { user_id: string, title: string, date: Date, description: string }, formattedDate: string, action: 'created' | 'updated' | 'deleted') => void;
+  addEvent: (data: { user_id: string, title: string, date: Date, description: string }, formattedDate: string, action: 'created' | 'updated' | 'deleted') => Promise<Event | null>;
 }
 
 const EventContext = createContext<EventContextState | undefined>(undefined);
 
 export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [dateClicked, setDateClicked] = useState<Date | null>(null);
+  const [dateClicked, setDateClicked] = useState<Date>(new Date());
   const [events, setEvents] = useState<Event[]>([]);
   const [loadedMonths, setLoadedMonths] = useState<{ [key: string]: boolean }>({});
   const [openEditor, setOpenEditor] = useState<boolean>(false)
@@ -53,7 +53,7 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
-  const addEvent = async (data: { user_id: string, title: string, date: Date, description: string }, formattedDate: string, action: 'created' | 'updated' | 'deleted') => {
+  const addEvent = async (data: { user_id: string, title: string, date: Date, description: string }, formattedDate: string, action: 'created' | 'updated' | 'deleted'): Promise<Event | null> => {
     try {
       const response = await fetch('/api/events', {
         method: 'POST',
@@ -101,6 +101,7 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           return [...prevEvents, result.event];
         }
       });
+      return result.event
     } catch (error) {
       setOpenEditor(false);
         toast({
@@ -108,6 +109,7 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           description: `Failed to create/update event taking place on ${formattedDate}`
         })
       console.error('Error adding event:', error);
+      return null;
     }
   };
 

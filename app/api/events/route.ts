@@ -26,9 +26,9 @@ export async function GET(request: NextRequest) {
         const startDate = new Date(year, month - 1, 1).toISOString();
         const endDate = new Date(year, month, 1).toISOString();
 
-        const { data: events, error } = await supabase
+        const { data: events, error} = await supabase
             .from('event')
-            .select('*')
+            .select('*, ai_event_record(id, messages, display_messages)')
             .eq('user_id', user_id)
             .gte('date', startDate)
             .lt('date', endDate);
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
                 .from('event')
                 .update({ title, description })
                 .eq('id', existingEvent.id)
-                .select()
+                .select('*, ai_event_record(id, messages, display_messages)')
                 .single();
 
             if (updateError) {
@@ -91,8 +91,8 @@ export async function POST(request: NextRequest) {
         } else {
             const { data, error: createError } = await supabase
                 .from('event')
-                .insert([{ title, date, description, user_id: user_id }])
-                .select()
+                .insert([{ title, date, description, user_id }])
+                .select('*, ai_event_record(id, messages, display_messages)')
                 .single();
 
             if (createError) {

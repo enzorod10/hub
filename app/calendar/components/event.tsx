@@ -11,11 +11,9 @@ import { useEventContext } from "@/context/EventContext";
 import { Pencil } from "lucide-react";
 import { format } from 'date-fns';
 import { useRef } from "react";
-import { useSessionContext } from "@/context/SessionContext";
 
 const Event = () => {
     const { dateClicked, events, setOpenEditor } = useEventContext();
-    const { user } = useSessionContext();
     const eventDiv = useRef<HTMLDivElement | null>(null);
     // Filter events for the clicked date
     const clickedDateEvents = events.filter(event => {

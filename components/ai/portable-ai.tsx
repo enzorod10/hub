@@ -6,9 +6,10 @@ import { useState } from "react";
 import { Settings } from "./settings/settings";
 import { useAiContext } from "@/context/AiContext";
 import { useSessionContext } from "@/context/SessionContext";
+import { format } from 'date-fns';
 
 export default function PortableAI() {
-  const { setToggleAi, toggleAi, context } = useAiContext();
+  const { toggleAi, context } = useAiContext();
   const [selectedTab, setSelectedTab] = useState('chat');
   const { user, updateSession } = useSessionContext();
 
@@ -47,12 +48,11 @@ export default function PortableAI() {
             </div>
             <div className="flex flex-col items-center text-slate-900 leading-none">
               <div className="font-semibold text-xs ">
-                CONTEXT
-              </div>
-              <div>
                 {context.type[0].toLocaleUpperCase() + context.type.slice(1)}
               </div>
-              
+              <div className="font-semibold text-xs ">
+                {context.subContext && format((context.subContext), 'MMM d, yyyy')}
+              </div>
             </div>
           </div>
 
