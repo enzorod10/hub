@@ -33,7 +33,7 @@ export default function RootLayout({
 
   // AiTest();
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased h-100dvh overflow-hidden`}
       >
@@ -42,7 +42,6 @@ export default function RootLayout({
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange>
-
           <SessionWrapper>
             <EventProvider>
               <AiWrapper>
@@ -61,7 +60,6 @@ export default function RootLayout({
             </EventProvider>
           </SessionWrapper>
         </ThemeProvider>
-
       </body>
     </html>
   );

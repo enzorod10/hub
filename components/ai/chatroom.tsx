@@ -29,9 +29,9 @@ export const Chatroom = ({ user }: { user: User }) => {
     }
       
     return(
-        <div className="flex flex-col h-full w-full">
-            <div className="border flex-1 rounded p-2 bg-gray-50 mb-2 overflow-hidden">
-            {context.displayMessages
+        <div className="flex flex-col h-full w-full overflow-hidden">
+            <div className="border flex-1 rounded p-2 bg-gray-50 mb-2 overflow-auto">
+            {context.display_messages
                 .filter((m) => m.role !== "system")
                 .map((msg, i) => (
                 <div key={i} className={`mb-2 ${msg.role === "user" ? "text-right" : "text-left"}`}>

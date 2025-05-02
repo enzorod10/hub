@@ -4,8 +4,6 @@ import { NextResponse } from "next/server";
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
 
-  console.log(searchParams);
-
   // Extract auth code and optional redirect path
   const code = searchParams.get("code");
   const next = searchParams.get("next") ?? "/";

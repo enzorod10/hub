@@ -1,6 +1,8 @@
+'use client';
 import { User, Event } from '@/app/types';
 
 export const generateSchedulePrompt = (user: User, targetDate: Date, existingEvent: Event | null) => {
+  const userName = user.name || 'your user';
   const today = new Date();
   
   const formattedToday = today.toISOString().split('T')[0]
@@ -16,7 +18,7 @@ export const generateSchedulePrompt = (user: User, targetDate: Date, existingEve
   const userGoals = user.goals.map((g) => g.name);
   
   const prompt = `
-    You are a helpful personal assistant for ${user.name}.
+    You are a helpful personal assistant for ${userName}.
 
     ${planningInstruction}
 
@@ -24,18 +26,18 @@ export const generateSchedulePrompt = (user: User, targetDate: Date, existingEve
     ? `There is an existing schedule for the given day. Update or modify it based on the user's request. Preserve unchanged parts unless the user says otherwise. Here's the current schedule:\n\n${existingEvent.description}`
     : `There is currently nothing schedule for the given day. Please create a full day plan from scratch.`}
 
-    ${user.name}'s interests include: ${userInterests.join(', ')}.
-    Their obligations for that day may include: ${userObligations.join(', ') || 'none'}.
-    Their current goals are: ${userGoals.join(', ') || 'none'}.
+    ${userName}'s interests include: ${userInterests.length > 0 ? userInterests.join(', ') : 'none'}.
+    Their obligations for that day may include: ${userObligations.length > 0 ? userObligations.join(', ') : 'none'}.
+    Their current goals are: ${userGoals.length > 0 ? userGoals.join(', ') : 'none'}.
 
     Task:
-    - First, generate a short, creative, and fun title for ${user.name}'s day.
+    - First, generate a short, creative, and fun title for ${userName}'s day.
     - Then, create or update the schedule:
       - Integrate their **interests**
       - Respect or include any **obligations**
       - Support their **goals**
     - Include the planning date in the format YYYY-MM-DD.
-    - Finally, write a short, friendly message to ${user.name}.
+    - Finally, write a short, friendly message to ${userName}.
 
     Formatting Instructions:
     - Start with ##TITLE## followed by the title.
@@ -56,6 +58,8 @@ export const generateSchedulePrompt = (user: User, targetDate: Date, existingEve
 
     Only provide the raw title, schedule, date, and message using the delimiters above. No extra commentary.
   `.trim();
+
+  console.log('Generated Schedule Prompt:', prompt);
 
   return prompt;
 }

@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import {
   AlertDialog,
   AlertDialogContent,
+  AlertDialogTitle
 } from "@/components/ui/alert-dialog"
 import { format } from 'date-fns';
 
@@ -121,12 +122,13 @@ const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorPr
     // Format each time block and join them with delimiters
     const formattedDescription = timeBlocks.map(formatTimeBlock).join('');
 
-    onSubmit({ user_id, title, date, description: formattedDescription }, format(date, 'PPPP'), event ? 'updated' : 'created')
+    onSubmit({ user_id: user_id!, title, date, description: formattedDescription }, format(date, 'PPPP'), event ? 'updated' : 'created')
   }
 
   return (
     <AlertDialog onOpenChange={setOpenEditor} open={openEditor}>
-      <AlertDialogContent >
+      <AlertDialogContent>
+        <AlertDialogTitle className='sr-only'>Event Editor</AlertDialogTitle>
         <form onSubmit={e => handleSubmit(e)} className='relative gap-4 flex flex-col'>
           <span className="flex justify-between items-center text-muted-foreground w-full text-sm">
             <span>
@@ -166,7 +168,7 @@ const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorPr
             +
           </Button>
           <div className={`flex ${event ? 'justify-between' : 'justify-end'}`}>
-            {event && <Button onClick={() => handleDeleteEvent({ user_id, date }, format(date, 'PPPP'))} type="button" variant="destructive">Delete</Button>}
+            {event && <Button onClick={() => handleDeleteEvent({ user_id: user_id!, date }, format(date, 'PPPP'))} type="button" variant="destructive">Delete</Button>}
             <Button type="submit" className='me-2'>{event ? 'Update' : 'Create'}</Button>
           </div>
         </form>

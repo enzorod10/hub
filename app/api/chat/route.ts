@@ -20,9 +20,11 @@ export async function POST(req: NextRequest) {
     });
 
     const reply = completion.choices[0].message.content;
+    console.log({completion});
+
     return NextResponse.json({ reply });
   } catch (error: any) {
-    console.error(error);
+    console.error({aiChatError: error});
     return NextResponse.json(
       { message: 'Something went wrong', error: error.message },
       { status: 500 }

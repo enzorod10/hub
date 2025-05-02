@@ -19,24 +19,22 @@ export function AiWrapper({ children } : {
   const { addEvent, dateClicked, events } = useEventContext();
   const [context, setContext] = useState<Context>({ type: 'schedule', messages: [], display_messages: [], subContext: new Date() });
 
-  console.log({events})
-  console.log({context})
-
   useEffect(() => {
     if (dateClicked) {
       const formattedClicked = format(dateClicked, 'yyyy-MM-dd');
-      const matchingEvents = events.filter(event => {
+      const matchingEvent = events.find(event => {
         const eventDateStr = format(new Date(event.date), 'yyyy-MM-dd');
         return eventDateStr === formattedClicked;
       });
-      const aiRecord = matchingEvents[0]?.ai_event_record;
-      setContext(prev => ({ ...prev, subContext: dateClicked, messages: aiRecord?.messages ?? [], displayMessages: aiRecord?.display_messages ?? []}));
+      const aiRecord = matchingEvent?.ai_event_record;
+      setContext(prev => ({ ...prev, subContext: dateClicked, messages: aiRecord?.messages ?? [], display_messages: aiRecord?.display_messages ?? []}));
     }
   }, [dateClicked, events])
 
   const [toggleAi, setToggleAi] = useState(false);
 
   const handleSchedule = async ({ user, userMessage }: { user: User, userMessage: string }) => {
+    console.log('Checkpoint 0')
     let messages: { role: 'user' | 'assistant' | 'system', content: string }[] = [];
 
     if (!context.subContext){
@@ -44,6 +42,7 @@ export function AiWrapper({ children } : {
     }
 
     const existingEvent = await getEventByDate(user.id, context.subContext as Date)
+    console.log('Checkpoint 1')
     
     if (context.messages.length === 0) {
       messages = [
@@ -57,25 +56,27 @@ export function AiWrapper({ children } : {
       ];
     }
 
-    setContext(prev => ({ ...prev, messages, displayMessages: [...prev.display_messages, { role: 'user', content: userMessage }] }));
+    setContext(prev => ({ ...prev, messages, display_messages: [...prev.display_messages, { role: 'user', content: userMessage }] }));
+
+    console.log('Checkpoint 2')
 
     const res = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ messages }),
     });
+
+    console.log('Checkpoint 3')
   
     const data = await res.json();
     const raw = data.reply;
 
-    console.log({aiReply: raw})
-  
     const titleMatch = raw.match(/##TITLE##\s*(.+)/);
     const dateMatch = raw.match(/##DATE##\s*(\d{4}-\d{2}-\d{2})/);
     const messageMatch = raw.match(/##MESSAGE##\s*(.+)/s);
     
     const parsedTitle = titleMatch ? titleMatch[1].trim() : 'Untitled';
-    const parsedDate = new Date(dateMatch[1])
+    const parsedDate = new Date(dateMatch[1]) ?? new Date();
     const displayMessage = messageMatch ? messageMatch[1].trim() : '';
     
     // Now, extract only the schedule part
@@ -88,14 +89,31 @@ export function AiWrapper({ children } : {
     setContext(prev => ({
       ...prev,
       messages: [...prev.messages, { role: 'assistant', content: raw }],
-      displayMessages: [...prev.display_messages, { role: 'assistant', content: displayMessage }]
+      display_messages: [...prev.display_messages, { role: 'assistant', content: displayMessage }]
     }));
+    console.log('Checkpoint 4')
+
+    const newDisplayMessages: { role: 'user' | 'assistant' | 'system', content: string }[] = [
+      ...(context.display_messages ?? []),
+      { role: 'user', content: userMessage },
+      { role: 'assistant', content: displayMessage },
+    ];
+
+    const newMessages: { role: 'user' | 'assistant' | 'system', content: string }[] = [
+      ...(context.messages ?? []),
+      { role: 'user', content: userMessage },
+      { role: 'assistant', content: raw },
+    ];
 
     const event = await addEvent({
       title: parsedTitle,
       user_id: user.id,
       date: parsedDate,
       description,
+      ai_event_record: {
+        messages: newMessages,
+        display_messages: newDisplayMessages
+      }
     }, parsedDate.toISOString(), existingEvent ? 'updated' : 'created');
 
     if (event){
@@ -103,14 +121,10 @@ export function AiWrapper({ children } : {
         user_id: user.id,
         event_id: event.id,
         // target_date: parsedDate,
-        messages,
-        display_messages: [
-          ...context.display_messages,
-          { role: 'assistant', content: displayMessage },
-        ],
+        messages: newMessages,
+        display_messages: newDisplayMessages
       });
     }
-    
   };
 
   return (

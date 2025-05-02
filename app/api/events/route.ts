@@ -129,12 +129,14 @@ export async function DELETE(request: NextRequest) {
         const startOfDayDate = startOfDay(new Date(date)).toISOString();
         const endOfDayDate = endOfDay(new Date(date)).toISOString();
 
-        const { error: deleteError } = await supabase
+        const { data, error: deleteError } = await supabase
             .from('event')
             .delete()
             .eq('user_id', user_id)
             .gte('date', startOfDayDate)
             .lt('date', endOfDayDate);
+        console.log('called to delete', {data})
+
 
         if (deleteError) {
             console.error('Delete error:', deleteError);

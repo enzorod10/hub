@@ -57,8 +57,6 @@ export function SessionWrapper({ children } : {
     setLoading(false);
   };
 
-  console.log(session)
-
   return (
     <SessionContext.Provider value={{user: session,
      updateSession,

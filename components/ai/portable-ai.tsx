@@ -29,8 +29,8 @@ export default function PortableAI() {
         width: 320,
         height: 200,
       }}
-      minWidth={100}
-      minHeight={100}
+      minWidth={250}
+      minHeight={150}
       bounds="parent"
     >
         <div className="flex flex-col h-full w-full">

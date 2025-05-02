@@ -28,8 +28,8 @@ export default function AlertTab() {
     }, []);
 
     return (
-      <div className="flex w-full justify-between border border-red-500 border-4 p-3 bg-gray-100 text-secondary">
-        <div className="relative flex-1 overflow-x-hidden border">
+      <div className="flex w-full justify-between items-center border p-1 bg-gray-100 text-secondary">
+        <div className="relative flex-1 overflow-x-hidden">
             <div
                 ref={marqueeRef}
                 className="whitespace-nowrap flex gap-4"
@@ -38,11 +38,24 @@ export default function AlertTab() {
                 {matches.map((match, idx) => <div key={idx}> {match} </div>)}
             </div>
         </div>
-        <div className='w-48 border'>
+        <div className='w-48 flex items-center'>
+
             <span onClick={() => setToggleAi(prev => !prev)} className={`${toggleAi ? 'bg-cyan-300' : 'bg-slate-200' } mx-2 text-red-500 font-bold px-2 rounded`}>
                 AI
             </span>
-            2nd part
+            <div className='flex flex-col leading-none gap-1 text-sm'>
+                <div>
+                    {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </div>
+                <div>
+                    {new Date().toLocaleDateString(undefined, {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    })}
+                </div>
+                
+            </div>
         </div>
       </div>
     );

@@ -5,15 +5,21 @@ import { useToast } from '@/hooks/use-toast';
 import { endOfDay, isWithinInterval, startOfDay } from 'date-fns';
 import { useSessionContext } from './SessionContext';
 
+type addEventType = ( data: { user_id: string, title: string, date: Date, description: string, ai_event_record?: { messages: { role: 'user' | 'assistant' | 'system', content: string }[], display_messages: { role: 'user' | 'assistant' | 'system', content: string }[] } },
+    formattedDate: string,
+    action: 'created' | 'updated' | 'deleted') => Promise<Event | null>
+
+
 interface EventContextState {
   dateClicked: Date;
+  user_id: string | undefined;
   setDateClicked: (date: Date) => void;
   openEditor: boolean;
   setOpenEditor: (open: boolean) => void;
   events: Event[];
   setEvents: React.Dispatch<React.SetStateAction<Event[]>>;
   fetchEventsForMonth: (year: number, month: number) => void;
-  addEvent: (data: { user_id: string, title: string, date: Date, description: string }, formattedDate: string, action: 'created' | 'updated' | 'deleted') => Promise<Event | null>;
+  addEvent: addEventType
 }
 
 const EventContext = createContext<EventContextState | undefined>(undefined);
@@ -53,7 +59,7 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
-  const addEvent = async (data: { user_id: string, title: string, date: Date, description: string }, formattedDate: string, action: 'created' | 'updated' | 'deleted'): Promise<Event | null> => {
+  const addEvent: addEventType = async (data, formattedDate, action) => {
     try {
       const response = await fetch('/api/events', {
         method: 'POST',
@@ -91,14 +97,15 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             event.user_id === data.user_id
         );
 
+
         if (existingEventIndex !== -1) {
           // Update existing event
           const updatedEvents = [...prevEvents];
-          updatedEvents[existingEventIndex] = { ...updatedEvents[existingEventIndex], ...result.event };
+          updatedEvents[existingEventIndex] = { ...updatedEvents[existingEventIndex], ...result.event, ai_event_record: result.event.ai_event_record && {...result.ai_event_record, ...data.ai_event_record} };
           return updatedEvents;
         } else {
           // Create new event
-          return [...prevEvents, result.event];
+          return [...prevEvents, {...result.event, ai_event_record: data.ai_event_record}];
         }
       });
       return result.event
@@ -122,7 +129,7 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [user_id]);
 
   return (
-    <EventContext.Provider value={{ dateClicked, setDateClicked, addEvent, openEditor, setOpenEditor, events, setEvents, fetchEventsForMonth }}>
+    <EventContext.Provider value={{ dateClicked, setDateClicked, addEvent, openEditor, setOpenEditor, events, setEvents, fetchEventsForMonth, user_id }}>
       {children}
     </EventContext.Provider>
   );
