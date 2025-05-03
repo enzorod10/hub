@@ -10,5 +10,10 @@ export const navItems: NavItem[] = [
         title: 'Calendar',
         href: '/calendar',
         icon: 'calendar'
-    }
+    },
+    {
+        title: 'Buddy',
+        href: '/buddy',
+        icon: 'buddy'
+    },
 ]

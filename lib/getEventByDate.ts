@@ -14,6 +14,7 @@ export async function getEventByDate(userId: string, date: Date): Promise<Event 
     .single();
 
   if (error && error.code !== 'PGRST116') {
+    console.log('Error getting event by date:', error);
     console.error('Error fetching event:', error);
     return null;
   }

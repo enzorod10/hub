@@ -39,7 +39,7 @@ export const Obligations = ({ user, updateSession }: { user: User | null, update
   };
 
   return (
-    <div className="w-full text-primary-foreground">
+    <div className="w-full">
       <ul className="list-disc pl-5">
         {user?.obligations.map((category) => (
           <li key={category.id} className="text-sm flex items-center gap-2">

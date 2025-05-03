@@ -28,7 +28,7 @@ export default function AlertTab() {
     }, []);
 
     return (
-      <div className="flex w-full justify-between items-center border p-1 bg-gray-100 text-secondary">
+      <div className="flex w-full justify-between items-center p-1 bg-gray-100">
         <div className="relative flex-1 overflow-x-hidden">
             <div
                 ref={marqueeRef}
@@ -38,7 +38,7 @@ export default function AlertTab() {
                 {matches.map((match, idx) => <div key={idx}> {match} </div>)}
             </div>
         </div>
-        <div className='w-48 flex items-center'>
+        <div className='flex items-center'>
 
             <span onClick={() => setToggleAi(prev => !prev)} className={`${toggleAi ? 'bg-cyan-300' : 'bg-slate-200' } mx-2 text-red-500 font-bold px-2 rounded`}>
                 AI

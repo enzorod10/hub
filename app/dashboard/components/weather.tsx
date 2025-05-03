@@ -1,60 +1,62 @@
-'use client';
-import { useEffect, useState } from "react";
+'use client'; 
 
-export default function Weather() {
-    const [geoLocation, setGeoLocation] = useState<{lat: number, lon: number} | undefined>();
-    const [weather, setWeather] = useState<any>();
+import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import { weatherThemes } from '@/lib/weatherThemesMap';
+import { LucideIcon } from "lucide-react";
 
-    useEffect(() => {
-        const callFunc = async () => {
-        const res = await fetch('https://nominatim.openstreetmap.org/search?q=newark&format=json&limit=1', {
-            method: 'GET',
-            headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
-            'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token'}})
-        const data = await res.json();
-        setGeoLocation({
-            lat: data[0].lat,
-            lon: data[0].lon });
-        }
+type WeatherData = {
+  name: string;
+  weather: { main: string; description: string }[];
+  main: { temp: number };
+}
 
-        callFunc();
-    }, [])
+type WeatherProps = {
+  theme: { bgGradient: string; icon: LucideIcon | null; animation: string },
+  setTheme: (theme: { bgGradient: string; icon: LucideIcon | null; animation: string }) => void;
+}
+
+export default function Weather({theme, setTheme}: WeatherProps) {
+  const [data, setData] = useState<WeatherData | null>(null);
 
   useEffect(() => {
-    const fetchWeather = async () => {
-      if (geoLocation) {
-        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${geoLocation.lat}&longitude=${geoLocation.lon}&hourly=temperature_2m`);
-        const data = await res.json();
-        const weatherTemp = [];
-        data.hourly.time.forEach((time, index) => {
-          const hour = new Date(time).getHours();
-          if (hour === new Date().getHours()) {
-            weatherTemp.push({hour, temp: data.hourly.temperature_2m[index]})
-          }
-        }
-        );
-        setWeather(weatherTemp);
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      const res = await fetch(`/api/weather?lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
+      const dataFetched = await res.json();
+      const data = dataFetched.data;
+      if (!data || data.cod !== 200) {
+        console.error('Failed to fetch weather data:', dataFetched);
+        return;
       }
-    }
+      setData(data);
 
-    fetchWeather();
-  }, [geoLocation])
+      const main: keyof typeof weatherThemes = data.weather[0].main;
+      setTheme(weatherThemes[main] || {
+        bgGradient: 'bg-white',
+        icon: null,
+        animation: ''
+      });
+    });
+  }, [setTheme]);
 
-    return (
-        <div className='flex flex-wrap justify-evenly w-full p-4'>
-            {weather && weather.length > 0 && weather.map((weatherData, index) => (
-            <div key={index} className="flex flex-col items-center justify-center border rounded-md p-4">
-                <div className="text-xl">
-                {weatherData.hour}:00
-                </div>
-                <div className="text-md">
-                {weatherData.temp}&deg;c
-                </div>
-            </div>
-            ))}
-        </div>
-    );
+  function capitalizeWords(str: string): string {
+    return str.toLowerCase().split(' ').map(word => {
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    }).join(' ');
   }
+
+
+  if (!data) return <div className="h-screen flex items-center justify-center">Loading...</div>;
+
+  const Icon = theme.icon;
+
+  return (
+    <div className={`flex flex-col items-center justify-center transition-all duration-500 w-1/3`}>
+      <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 5, repeat: Infinity }} className={`${theme.animation}`}>
+        {Icon && <Icon size={80} />}
+      </motion.div>
+      <h1 className="text-3xl font-bold text-center">{capitalizeWords(data.weather[0].description)}</h1>
+      <p className="text-xl mt-1 font-semibold text-center">{((data.main.temp * 9/5) + 32).toFixed(0)}°F</p>
+    </div>
+  );
+}

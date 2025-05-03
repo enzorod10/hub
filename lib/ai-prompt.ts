@@ -24,7 +24,7 @@ export const generateSchedulePrompt = (user: User, targetDate: Date, existingEve
 
     ${existingEvent
     ? `There is an existing schedule for the given day. Update or modify it based on the user's request. Preserve unchanged parts unless the user says otherwise. Here's the current schedule:\n\n${existingEvent.description}`
-    : `There is currently nothing schedule for the given day. Please create a full day plan from scratch.`}
+    : `There is currently nothing scheduled for the given day. Please create a full day plan from scratch.`}
 
     ${userName}'s interests include: ${userInterests.length > 0 ? userInterests.join(', ') : 'none'}.
     Their obligations for that day may include: ${userObligations.length > 0 ? userObligations.join(', ') : 'none'}.

@@ -47,8 +47,9 @@ export const Chatroom = ({ user }: { user: User }) => {
             </div>
 
             <div className="flex gap-2 ">
-                <Input 
-                    className="text-primary-foreground"
+                <Input
+
+                    className="text-black focus-visible:ring-0"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleSend()}

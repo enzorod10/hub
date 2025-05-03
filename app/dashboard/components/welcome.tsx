@@ -1,20 +1,19 @@
 'use client';
 
+// import ChatPage from "./components/ai-chat";
 export default function Welcome() {
-    
     return (
-        <div className="p-4 w-full">
-            <div className="text-2xl font-bold mb-4">
-                Welcome to your dashboard!
+        <div className="flex flex-col justify-around w-2/3">
+            <div className="text-2xl">
+                Hi Enzo!
             </div>
-            <div className="text-lg mb-2">
-                Today is: {new Date().toLocaleString('en-US', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                })}            
+            <div>
+                This will be AI generated. Today, you have 4 different tasks. Here they are: Ordering something online, eating pizza, and setting out for lunch.
             </div>
+            <div className="text-sm italic">
+                &quot;Some inspirational quote here&quot; -Zhao Xing
+            </div>
+            
         </div>
     );
-  }
+}

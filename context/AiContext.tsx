@@ -38,6 +38,7 @@ export function AiWrapper({ children } : {
     let messages: { role: 'user' | 'assistant' | 'system', content: string }[] = [];
 
     if (!context.subContext){
+      console.log('NO DATE CONTEXT')
       return console.error('no date context')
     }
 

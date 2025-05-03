@@ -14,7 +14,7 @@ export const Settings = ({ user, updateSession }: { user: User | null, updateSes
   const selectedTab = tabs.find(tab => tab.activate) || tabs[0];
 
   return (
-    <div className="w-full text-primary-foreground">
+    <div className="w-full text-black">
       <div>
         {tabs.map((tab) => (
           <button
