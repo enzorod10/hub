@@ -28,7 +28,7 @@ export default function AlertTab() {
     }, []);
 
     return (
-      <div className="flex w-full justify-between items-center p-1 bg-gray-100">
+      <div className="flex w-full justify-between items-center p-2 bg-gray-100">
         <div className="relative flex-1 overflow-x-hidden">
             <div
                 ref={marqueeRef}

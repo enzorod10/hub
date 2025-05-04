@@ -4,7 +4,7 @@ import { NavItem } from "@/app/types";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import Link from "next/link"
-import React from "react"
+import React, { Dispatch, SetStateAction } from "react"
 import { Icons } from "@/components/icons";
 
 export default function Sidebar() {
@@ -26,7 +26,7 @@ export default function Sidebar() {
   }
 }
 
-export function Nav({ items }: { items: NavItem[] }) {
+export function Nav({ items, setOpen }: { items: NavItem[],  setOpen?: Dispatch<SetStateAction<boolean>> }) {
     const path = usePathname();
     
     if (!['/'].includes(path)){
@@ -38,6 +38,9 @@ export function Nav({ items }: { items: NavItem[] }) {
                         item.href && <Link
                         key={item.href}
                         href={item.disabled ? "/" : item.href}
+                        onClick={() => {
+                          if (setOpen) setOpen(false);
+                        }}
                         >
                             <span
                             className={cn(
@@ -58,7 +61,6 @@ export function Nav({ items }: { items: NavItem[] }) {
                         </Link>
                     )})}
             </nav>
-
         )
     }
 }

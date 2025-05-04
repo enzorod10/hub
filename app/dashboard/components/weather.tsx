@@ -46,7 +46,7 @@ export default function Weather({theme, setTheme}: WeatherProps) {
   }
 
 
-  if (!data) return <div className="h-screen flex items-center justify-center">Loading...</div>;
+  if (!data) return <div className="flex items-center justify-center">Loading...</div>;
 
   const Icon = theme.icon;
 

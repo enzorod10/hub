@@ -34,15 +34,18 @@ export const Chatroom = ({ user }: { user: User }) => {
             {context.display_messages
                 .filter((m) => m.role !== "system")
                 .map((msg, i) => (
-                <div key={i} className={`mb-2 ${msg.role === "user" ? "text-right" : "text-left"}`}>
                     <div
-                    className={`inline-block px-3 py-2 text-secondary rounded ${
-                        msg.role === "user" ? "bg-blue-200" : "bg-green-100"
-                    }`}
+                    key={i}
+                    className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`px-2 py-2 whitespace-pre-wrap
+                        ${msg.role === 'user' ? 'max-w-[75%] rounded-lg bg-[#2F2F2F] text-[#FFFFFF] ' : 'text-gray-900'}
+                      `}
                     >
-                    {msg.content}
+                      {msg.content}
                     </div>
-                </div>
+                  </div>
                 ))}
             </div>
 

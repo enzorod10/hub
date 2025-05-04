@@ -2,6 +2,8 @@ import React from 'react';
 import { UserNav } from './user-nav';
 import { ModeToggle } from './ui/mode-toggle';
 import Image from 'next/image';
+import { MobileSidebar } from './mobile-sidebar';
+import { cn } from '@/lib/utils';
 
 export default function Header() {
     return (
@@ -17,6 +19,9 @@ export default function Header() {
                 <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
                     Hub
                 </h4>
+          </div>
+          <div className={cn("block md:!hidden")}>
+            <MobileSidebar />
           </div>
           <div className="flex items-center gap-2">
             <UserNav />
