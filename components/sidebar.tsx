@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import Link from "next/link"
 import React, { Dispatch, SetStateAction } from "react"
-import { Icons } from "@/components/icons";
+import { Icons } from "@/constants/icons";
 
 export default function Sidebar() {
   const pathname = usePathname();
