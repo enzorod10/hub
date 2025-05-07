@@ -14,15 +14,21 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { createClient } from "@/utils/supabase/client";
+import { Personalization } from "../types";
+import { useSessionContext } from "@/context/SessionContext";
 
 const steps = ["Daily Rhythm", "Priorities", "Personality", "Goals", "Work & Commute"];
 
 export default function GetToKnowYouForm() {
+  const supabase = createClient();
+  const { user } = useSessionContext();
+
   const [step, setStep] = useState(0);
-  const [formData, setFormData] = useState({
-    wakeTime: "07:00",
+  const [formData, setFormData] = useState<Personalization>({
+    wake_time: "07:00",
     productivity: "morning",
-    sleepHours: 8,
+    sleep_hours: 8,
     priorities: {
       health: 5,
       career: 5,
@@ -33,35 +39,88 @@ export default function GetToKnowYouForm() {
     personality: {
       introvert: 5,
       structured: 5,
-      soloRecharge: 5,
+      solo_recharge: 5,
     },
     tone: "friendly",
     goals: [""],
-    longTermClarity: 5,
-    isEmployed: false,
-    commuteTime: {
-      toWork: 0,
-      fromWork: 0,
-    },
-    workSchedule: {
-      startTime: "09:00",
-      endTime: "17:00",
-    },
+    long_term_clarity: 5,
+    is_employed: false,
+    commute_to_work: 0,
+    commute_from_work: 0,
+    work_start: "09:00",
+    work_end: "17:00",
   });
 
   const nextStep = () => step < steps.length - 1 && setStep(step + 1);
   const prevStep = () => step > 0 && setStep(step - 1);
 
-  const update = (key, value) => setFormData({ ...formData, [key]: value });
-  const updateNested = (section, key, value) => {
+  const update = (key: string, value: string | number | boolean | string[]) => setFormData({ ...formData, [key]: value });
+  const updateNested = (section: string, key: string, value: string | number) => {
     setFormData({
       ...formData,
       [section]: {
-        ...formData[section],
+        ...(formData[section as keyof Personalization] as object),
         [key]: value,
       },
     });
   };
+
+    async function handleSubmit(e: React.MouseEvent<HTMLButtonElement>) {
+      e.preventDefault();
+
+      if (!user) return;
+
+      const {
+        wake_time,
+        sleep_hours,
+        productivity,
+        tone,
+        long_term_clarity,
+        is_employed,
+        work_start,
+        work_end,
+        commute_to_work,
+        commute_from_work,
+        goals,
+        priorities,
+        personality,
+      } = formData;
+
+      const { error } = await supabase
+        .from('personalization')
+        .upsert({
+          user_id: user.id,
+          wake_time: wake_time,
+          sleep_hours: sleep_hours,
+          productivity,
+          tone,
+          long_term_clarity: long_term_clarity,
+          is_employed: is_employed,
+          work_start: work_start,
+          work_end: work_end,
+          commute_to_work: commute_to_work,
+          commute_from_work: commute_from_work,
+          goals: goals.map(goal => ({ goal })), // If storing as JSONB objects
+          priorities: {
+            health: priorities.health,
+            career: priorities.career,
+            social: priorities.social,
+            creativity: priorities.creativity,
+            rest: priorities.rest,
+          },
+          personality: {
+            introvert: personality.introvert,
+            structured: personality.structured,
+            solo_recharge: personality.solo_recharge,
+          },
+        }, { onConflict: 'user_id' });
+    
+      if (error) {
+        console.error('Submission error:', error.message);
+      } else {
+        console.log('Personalization saved!');
+      }
+    }
 
   return (
     <div className="max-w-xl mx-auto p-6 space-y-4">
@@ -75,7 +134,7 @@ export default function GetToKnowYouForm() {
             <h2 className="text-xl font-semibold">Daily Rhythm</h2>
             <div>
               <Label className="mb-1 block">Wake-up Time</Label>
-              <Input type="time" value={formData.wakeTime} onChange={(e) => update("wakeTime", e.target.value)} />
+              <Input type="time" value={formData.wake_time} onChange={(e) => update("wakeTime", e.target.value)} />
             </div>
             <div>
               <Label className="mb-1 block">Most Productive Period</Label>
@@ -92,8 +151,8 @@ export default function GetToKnowYouForm() {
               </Select>
             </div>
             <div>
-              <Label className="mb-1 block">Ideal Sleep Hours: {formData.sleepHours}</Label>
-              <Slider min={4} max={10} step={1} defaultValue={[formData.sleepHours]} onValueChange={([val]) => update("sleepHours", val)} />
+              <Label className="mb-1 block">Ideal Sleep Hours: {formData.sleep_hours}</Label>
+              <Slider min={4} max={10} step={1} defaultValue={[formData.sleep_hours]} onValueChange={([val]) => update("sleepHours", val)} />
             </div>
           </motion.div>
         )}
@@ -101,7 +160,7 @@ export default function GetToKnowYouForm() {
         {step === 1 && (
           <motion.div key="step2" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }} className="space-y-4">
             <h2 className="text-xl font-semibold">Life Priorities</h2>
-            {Object.keys(formData.priorities).map((key) => (
+            {(Object.keys(formData.priorities) as Array<keyof typeof formData.priorities>).map((key) => (
               <div key={key}>
                 <Label className="block mb-1 capitalize">{key}: {formData.priorities[key]}</Label>
                 <Slider min={1} max={10} step={1} defaultValue={[formData.priorities[key]]} onValueChange={([val]) => updateNested("priorities", key, val)} />
@@ -155,8 +214,8 @@ export default function GetToKnowYouForm() {
               + Add another goal
             </Button>
             <div>
-              <Label className="mb-1 block">Clarity of Long-Term Direction: {formData.longTermClarity}</Label>
-              <Slider min={1} max={10} step={1} defaultValue={[formData.longTermClarity]} onValueChange={([val]) => update("longTermClarity", val)} />
+              <Label className="mb-1 block">Clarity of Long-Term Direction: {formData.long_term_clarity}</Label>
+              <Slider min={1} max={10} step={1} defaultValue={[formData.long_term_clarity]} onValueChange={([val]) => update("longTermClarity", val)} />
             </div>
           </motion.div>
         )}
@@ -165,26 +224,26 @@ export default function GetToKnowYouForm() {
           <motion.div key="step5" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }} className="space-y-4">
             <h2 className="text-xl font-semibold">Work & Commute</h2>
             <div className="flex items-center space-x-2">
-              <Switch id="is-employed" checked={formData.isEmployed} onCheckedChange={(val) => update("isEmployed", val)} />
+              <Switch id="is-employed" checked={formData.is_employed} onCheckedChange={(val) => update("is_employed", val)} />
               <Label htmlFor="is-employed">Currently Employed</Label>
             </div>
-            {formData.isEmployed && (
+            {formData.is_employed && (
               <div className="space-y-4">
                 <div>
                   <Label className="mb-1 block">Work Start Time</Label>
-                  <Input type="time" value={formData.workSchedule.startTime} onChange={(e) => updateNested("workSchedule", "startTime", e.target.value)} />
+                  <Input type="time" value={formData.work_start} onChange={(e) => update("work_start", e.target.value)} />
                 </div>
                 <div>
                   <Label className="mb-1 block">Work End Time</Label>
-                  <Input type="time" value={formData.workSchedule.endTime} onChange={(e) => updateNested("workSchedule", "endTime", e.target.value)} />
+                  <Input type="time" value={formData.work_end} onChange={(e) => update("work_end", e.target.value)} />
                 </div>
                 <div>
                   <Label className="mb-1 block">Commute to Work (min)</Label>
                   <Input
                     type="number"
                     min={0}
-                    value={formData.commuteTime.toWork}
-                    onChange={(e) => updateNested("commuteTime", "toWork", parseInt(e.target.value))}
+                    value={formData.commute_to_work}
+                    onChange={(e) => update("commute_to_work", parseInt(e.target.value))}
                   />
                 </div>
                 <div>
@@ -192,8 +251,8 @@ export default function GetToKnowYouForm() {
                   <Input
                     type="number"
                     min={0}
-                    value={formData.commuteTime.fromWork}
-                    onChange={(e) => updateNested("commuteTime", "fromWork", parseInt(e.target.value))}
+                    value={formData.commute_from_work}
+                    onChange={(e) => update("commute_from_work", parseInt(e.target.value))}
                   />
                 </div>
               </div>
@@ -206,7 +265,7 @@ export default function GetToKnowYouForm() {
         <Button onClick={prevStep} disabled={step === 0} variant="secondary">
           Back
         </Button>
-        <Button onClick={nextStep} disabled={step === steps.length - 1}>
+        <Button onClick={step === steps.length - 1 ? (e) => (handleSubmit(e)) : nextStep}>
           {step === steps.length - 1 ? "Finish" : "Next"}
         </Button>
       </div>

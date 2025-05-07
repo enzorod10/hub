@@ -24,7 +24,7 @@ export function SessionWrapper({ children } : {
         } else if (session.user){
           const { data: user, error } = await supabase
             .from('profile')
-            .select('*, interests(*), obligations(*), goals(*)')
+            .select('*, personalization(*)')
             .eq('id', session.user.id)
             .single();
             console.log(error)
@@ -45,7 +45,7 @@ export function SessionWrapper({ children } : {
     setLoading(true);
     const { data: user, error } = await supabase
       .from('profile')
-      .select('*, interests(*), obligations(*), goals(*)')
+      .select('*, personalization(*)')
       .eq('id', session?.id)
       .single();
     

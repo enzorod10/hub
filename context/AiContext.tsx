@@ -117,6 +117,8 @@ export function AiWrapper({ children } : {
       }
     }, parsedDate.toISOString(), existingEvent ? 'updated' : 'created');
 
+    console.log('Checkpoint 5')
+
     if (event){
       await upsertAIEventRecord({
         user_id: user.id,

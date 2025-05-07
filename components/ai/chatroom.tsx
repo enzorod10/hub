@@ -60,7 +60,7 @@ export const Chatroom = ({ user }: { user: User }) => {
                 />
                 <Button
                     variant="outline"
-                    onClick={handleSend}
+                    onClick={(e) => (e.preventDefault(), handleSend())}
                     disabled={loading}
                 >
                     Send

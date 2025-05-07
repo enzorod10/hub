@@ -43,22 +43,31 @@ export interface User {
     id: string;
     created_at: Date;
     name: string;
-    interests: Interest[];
-    obligations: Obligation[];
-    goals: Goal[];
+    personalization: Personalization;
 }
 
-export interface Interest {
-    id: string;
-    name: string;
-}
-
-export interface Obligation {
-    id: string;
-    name: string;
-}
-
-export interface Goal {
-    id: string;
-    name: string;
+export interface Personalization {
+    wake_time: string,
+    productivity: string,
+    sleep_hours: number,
+    priorities: {
+      health: number,
+      career: number,
+      social: number,
+      creativity: number,
+      rest: number,
+    },
+    personality: {
+      introvert: number,
+      structured: number,
+      solo_recharge: number,
+    },
+    tone: string,
+    goals: string[],
+    long_term_clarity: number,
+    is_employed: false,
+    commute_to_work: number,
+    commute_from_work: number,
+    work_start: string,
+    work_end: string,
 }
