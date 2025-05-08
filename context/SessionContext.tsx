@@ -17,28 +17,33 @@ export function SessionWrapper({ children } : {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const subscription = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (!session?.user) {
-          setSession(null)
-        } else if (session.user){
+    const subscription = supabase.auth.onAuthStateChange((event, session) => {
+      if (!session?.user) {
+        setSession(null);
+        setLoading(false);
+      } else {
+        setTimeout(async () => {
           const { data: user, error } = await supabase
             .from('profile')
             .select('*, personalization(*)')
             .eq('id', session.user.id)
             .single();
-            console.log(error)
-          if (!error && user){
-            setSession(user)
+          
+          console.log(error);
+  
+          if (!error && user) {
+            setSession(user);
           }
-        }
-        setLoading(false)
-      })
-
+  
+          setLoading(false);
+        }, 0);
+      }
+    });
+  
     return () => {
-      subscription.data.subscription.unsubscribe()
-    }
-  }, [])
+      subscription.data.subscription.unsubscribe();
+    };
+  }, []);
 
   // Function to update user
   const updateSession = async () => {

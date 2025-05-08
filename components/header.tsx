@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 
 export default function Header() {
     return (
-      <div className="top-0 left-0 right-0 supports-backdrop-blur:bg-background/60 border-b bg-background/95 backdrop-blur z-20">
+      <div className="top-0 left-0 right-0 supports-backdrop-blur:bg-background/60 bg-background/95 backdrop-blur z-20">
         <nav className="h-14 flex items-center justify-between px-4">
           <div className='flex items-center'>
             <div className={cn("block md:!hidden")}>

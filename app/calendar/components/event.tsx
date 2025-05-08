@@ -11,6 +11,7 @@ import { useEventContext } from "@/context/EventContext";
 import { Pencil } from "lucide-react";
 import { format } from 'date-fns';
 import { useRef } from "react";
+import { cn } from "@/lib/utils";
 
 const Event = () => {
     const { dateClicked, events, setOpenEditor } = useEventContext();
@@ -35,15 +36,15 @@ const Event = () => {
 
     if (clickedDateEvents.length > 0){
         return (
-            <Card ref={eventDiv} className="relative flex-1 md:w-96 ">
-                <CardHeader>
+            <Card ref={eventDiv} className={cn(`relative p-0!  flex-1 md:w-96 border border-red-500 h-4/5 overflow-hidden`)}>
+                <CardHeader className="p-2 sm:p-6">
                     <CardTitle>{clickedDateEvents[0].title}</CardTitle>
                     <CardDescription>
                         {format(clickedDateEvents[0].date, 'PPPP') + ' '}
                     </CardDescription>
                 </CardHeader>
                 {clickedDateEvents[0].description &&
-                    <CardContent className="flex flex-col gap-2">
+                    <CardContent className="flex flex-col gap-2 overflow-y-auto h-4/5">
                         {parsedDescription()?.map((block, index) => {
                             return (
                                 <div key={index} className="flex flex-col">

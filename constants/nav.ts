@@ -12,13 +12,13 @@ export const navItems: NavItem[] = [
         icon: 'calendar'
     },
     {
-        title: 'Personalization',
-        href: '/personalization',
-        icon: 'personalization'
-    },
-    {
         title: 'Buddy',
         href: '/buddy',
         icon: 'buddy'
+    },
+    {
+        title: 'Personalization',
+        href: '/personalization',
+        icon: 'personalization'
     },
 ]

@@ -1,3 +1,4 @@
+'use client';
 import { Sun, CloudRain, Cloud, Snowflake, Zap, CloudFog } from 'lucide-react';
 
 export const weatherThemes = {

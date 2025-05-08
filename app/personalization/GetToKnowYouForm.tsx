@@ -26,29 +26,29 @@ export default function GetToKnowYouForm() {
 
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState<Personalization>({
-    wake_time: "07:00",
-    productivity: "morning",
-    sleep_hours: 8,
+    wake_time: user?.personalization.wake_time ?? "07:00",
+    productivity: user?.personalization.productivity ?? "morning",
+    sleep_hours: user?.personalization.sleep_hours ?? 8,
     priorities: {
-      health: 5,
-      career: 5,
-      social: 5,
-      creativity: 5,
-      rest: 5,
+      health: user?.personalization.priorities.health ?? 5,
+      career: user?.personalization.priorities.career ?? 5,
+      social: user?.personalization.priorities.social ?? 5,
+      creativity: user?.personalization.priorities.creativity ?? 5,
+      rest: user?.personalization.priorities.rest ?? 5,
     },
     personality: {
-      introvert: 5,
-      structured: 5,
-      solo_recharge: 5,
+      introvert: user?.personalization.personality.introvert ?? 5,
+      structured: user?.personalization.personality.structured ?? 5,
+      solo_recharge: user?.personalization.personality.solo_recharge ?? 5,
     },
-    tone: "friendly",
-    goals: [""],
-    long_term_clarity: 5,
-    is_employed: false,
-    commute_to_work: 0,
-    commute_from_work: 0,
-    work_start: "09:00",
-    work_end: "17:00",
+    tone: user?.personalization.tone ?? "friendly",
+    goals: user?.personalization.goals ? user.personalization.goals.map((g: string | { goal: string }) => typeof g === 'string' ? g : g.goal) : [""],
+    long_term_clarity: user?.personalization.long_term_clarity ?? 5,
+    is_employed: user?.personalization.is_employed ?? false,
+    commute_to_work: user?.personalization.commute_to_work ?? 0,
+    commute_from_work: user?.personalization.commute_from_work ?? 0,
+    work_start: user?.personalization.work_start ?? "09:00",
+    work_end: user?.personalization.work_end ?? "17:00",
   });
 
   const nextStep = () => step < steps.length - 1 && setStep(step + 1);
@@ -134,7 +134,7 @@ export default function GetToKnowYouForm() {
             <h2 className="text-xl font-semibold">Daily Rhythm</h2>
             <div>
               <Label className="mb-1 block">Wake-up Time</Label>
-              <Input type="time" value={formData.wake_time} onChange={(e) => update("wakeTime", e.target.value)} />
+              <Input type="time" value={formData.wake_time} onChange={(e) => update("wake_time", e.target.value)} />
             </div>
             <div>
               <Label className="mb-1 block">Most Productive Period</Label>
@@ -152,7 +152,7 @@ export default function GetToKnowYouForm() {
             </div>
             <div>
               <Label className="mb-1 block">Ideal Sleep Hours: {formData.sleep_hours}</Label>
-              <Slider min={4} max={10} step={1} defaultValue={[formData.sleep_hours]} onValueChange={([val]) => update("sleepHours", val)} />
+              <Slider min={4} max={10} step={1} defaultValue={[formData.sleep_hours]} onValueChange={([val]) => update("sleep_hours", val)} />
             </div>
           </motion.div>
         )}

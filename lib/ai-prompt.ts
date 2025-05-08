@@ -17,8 +17,12 @@ export const generateSchedulePrompt = (
     : `Today is ${formattedToday}.\nThe planning date is ${formattedTarget}.`;
 
   const employedBlock = personalization.is_employed
-    ? `They work from ${personalization.work_start} to ${personalization.work_end}, with a commute of ${personalization.commute_to_work} minutes each way.`
+    ? `They work from ${personalization.work_start} to ${personalization.work_end}, with a commute of ${personalization.commute_to_work} minutes to work and ${personalization.commute_from_work} minutes from work to home.`
     : `They are not currently employed.`;
+
+  const goalsList = personalization.goals?.length
+  ? personalization.goals.map((g: string | { goal: string }) => typeof g === 'string' ? g : g.goal).join(', ')
+  : 'none';
 
   const prompt = `
   You are a helpful AI personal assistant for ${userName}.
@@ -38,6 +42,7 @@ export const generateSchedulePrompt = (
   - Long-Term Clarity (1–10): ${personalization.long_term_clarity}
   - Preferred Tone: ${personalization.tone}
   - ${employedBlock}
+  - Their current goals are: ${goalsList}
 
   Task:
   - First, generate a short, creative, and fun title for ${userName}'s day.
@@ -58,8 +63,17 @@ export const generateSchedulePrompt = (
   - After the schedule, write ##DATE## followed by the planning date.
   - Then, write ##MESSAGE## followed by your short friendly message.
 
-  Only provide the raw title, schedule, date, and message using the delimiters above. No extra commentary.
-    `.trim();
+   Example output:
+
+    ##TITLE## Focus and Fun  
+    ##DELIM## 8:00 AM ##DELIM## Morning jog  
+    ##DELIM## 10:00 AM ##DELIM## Work on coding project  
+    ##DELIM## 1:00 PM ##DELIM## Lunch break  
+    ##DATE## 2025-04-28  
+    ##MESSAGE## Here's your plan! Let me know if you'd like to adjust anything.
+
+    Only provide the raw title, schedule, date, and message using the delimiters above. No extra commentary.`
+    .trim();
 
   console.log('Generated Schedule Prompt:', prompt);
 

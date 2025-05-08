@@ -50,10 +50,10 @@ export default function RootLayout({
                   <AlertTab />
                   <div className="flex relative h-[calc(100dvh-114px)]">
                     <Sidebar />
-                    <div className="flex-1 relative h-[calc(100dvh-114px)] overflow-auto">
+                    <div className="flex-1 relative h-[calc(100dvh-114px)] overflow-hidden">
                       {children}
+                      <PortableAI />
                     </div>
-                    <PortableAI />
                   </div>
                 </div>
               </AiWrapper>

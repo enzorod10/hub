@@ -1,10 +1,11 @@
+'use client';
 import { createClient } from '@/utils/supabase/client';
 import { Event } from '@/app/types';
 
 const supabase = createClient();
 
 export async function getEventByDate(userId: string, date: Date): Promise<Event | null> {
-  const formattedDate = date.toISOString().split('T')[0]; // '2025-04-20'
+  const formattedDate = date.toISOString().split('T')[0];
 
   console.log('before supabase')
 

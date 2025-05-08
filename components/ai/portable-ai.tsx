@@ -25,7 +25,7 @@ export default function PortableAI() {
       bounds="parent"
     >
         <div className="flex flex-col h-full w-full">
-          <div className="flex justify-between items-center pb-2">
+          <div className="flex justify-between items-center pb-2 dark:text-secondary">
             <div className="font-semibold leading-none">
               {context.type[0].toLocaleUpperCase() + context.type.slice(1)}
             </div>
