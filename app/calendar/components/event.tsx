@@ -36,7 +36,7 @@ const Event = () => {
 
     if (clickedDateEvents.length > 0){
         return (
-            <Card ref={eventDiv} className={cn(`relative p-0!  flex-1 md:w-96 border border-red-500 h-4/5 overflow-hidden`)}>
+            <Card ref={eventDiv} className={cn(`relative p-0!  flex-1 md:w-96 h-4/5 overflow-hidden`)}>
                 <CardHeader className="p-2 sm:p-6">
                     <CardTitle>{clickedDateEvents[0].title}</CardTitle>
                     <CardDescription>

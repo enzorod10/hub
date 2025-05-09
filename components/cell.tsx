@@ -18,14 +18,14 @@ const Cell = ({ date, id, setDateClicked, dotColor }: AppProps) => {
 const CellWithDate = ({ date, id, setDateClicked, dotColor }: AppProps) => {
     return (
         <div onClick={() => setDateClicked(date!)} 
-        className='cursor-pointer sm:min-w-12 hover:bg-accent hover:text-accent-foreground border m-0.5 sm:m-1 pt-0.5 sm-pt-1 p-1 h-10 sm:h-12 flex relative flex-col rounded' 
+        className='cursor-pointer min-w-8 sm:min-w-12 hover:bg-accent hover:text-accent-foreground border m-1 p-1 h-10 sm:h-12 flex relative flex-col rounded' 
         id={id}
         >
             <p className="text-xs sm:text-sm">
                 {getDate(date!)}
             </p>
             {<div className={`div absolute flex w-full h-full justify-center items-center top-0 left-0`}>
-                <div className={`absolute h-1.5 w-6 ${dotColor} rounded-full`}>
+                <div className={`absolute h-1 w-full bottom-0 ${dotColor} rounded-md`}>
                 </div>
             </div>}
         </div>

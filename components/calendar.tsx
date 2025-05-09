@@ -66,12 +66,12 @@ const Calendar = () => {
       };
 
     return(
-        <div className="flex-1 min-w-max h-fit flex flex-col border rounded pb-2">
-            <div className='flex items-center py-2 select-none'>
+        <div className="flex-1 min-w-max max-h-fit flex flex-col border rounded pb-2">
+            <div className='flex items-center py-2 select-none text-xs sm:text-sm'>
                 <div className="flex-1 text-center cursor-pointer" onClick={() => handleMonthChange('prev')}>
                     {'<'}
                 </div>
-                <div className="flex-1 text-center justify-center cursor-pointer text-sm">
+                <div className="flex-1 text-center justify-center cursor-pointer">
                     {monthsOfTheYear[monthSelected - 1]} {yearSelected}
                 </div>
                 <div className="flex-1 text-center cursor-pointer" onClick={() => handleMonthChange('next')}>

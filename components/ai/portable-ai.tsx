@@ -5,6 +5,7 @@ import { Chatroom } from "./chatroom";
 import { useAiContext } from "@/context/AiContext";
 import { useSessionContext } from "@/context/SessionContext";
 import { format } from 'date-fns';
+import { Separator } from "../ui/separator";
 
 export default function PortableAI() {
   const { toggleAi, context } = useAiContext();
@@ -26,11 +27,14 @@ export default function PortableAI() {
     >
         <div className="flex flex-col h-full w-full">
           <div className="flex justify-between items-center pb-2 dark:text-secondary">
-            <div className="font-semibold leading-none">
-              {context.type[0].toLocaleUpperCase() + context.type.slice(1)}
-            </div>
-            <div className="font-semibold leading-none text-xs">
-              {context.subContext && format((context.subContext), 'MMM d, yyyy')}
+            <div className="flex items-center h-4 gap-1">
+              <div className="font-semibold leading-none">
+                {context.type[0].toLocaleUpperCase() + context.type.slice(1)}
+              </div>
+              <Separator orientation="vertical"/>
+              {context.subContext && <div className="font-semibold italic leading-none text-xs">
+                {format((context.subContext), 'MMM d, yyyy')}
+              </div>}
             </div>
           </div>
           <Chatroom user={user!}/>

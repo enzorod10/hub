@@ -5,7 +5,7 @@ export default function Welcome() {
     return (
         <div className="flex flex-col justify-around w-2/3">
             <div className="text-2xl">
-                Hi Enzo!
+                Hi, User!
             </div>
             <div>
                 This will be AI generated. Today, you have 4 different tasks. Here they are: Ordering something online, eating pizza, and setting out for lunch.
