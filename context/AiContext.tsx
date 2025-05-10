@@ -1,7 +1,7 @@
 'use client';
 import { createContext, useState, useContext, Dispatch, SetStateAction, useEffect } from "react"
 import { User, Context } from "@/app/types";
-import { generateSchedulePrompt } from "@/lib/ai-prompt";
+import { generateSchedulePrompt } from "@/lib/generate-event-ai";
 import { useEventContext } from "./EventContext";
 import { getEventByDate } from "@/lib/getEventByDate";
 import { format } from 'date-fns';
@@ -34,7 +34,6 @@ export function AiWrapper({ children } : {
   const [toggleAi, setToggleAi] = useState(false);
 
   const handleSchedule = async ({ user, userMessage }: { user: User, userMessage: string }) => {
-    console.log('Checkpoint 0')
     let messages: { role: 'user' | 'assistant' | 'system', content: string }[] = [];
 
     if (!context.subContext){
@@ -43,7 +42,6 @@ export function AiWrapper({ children } : {
     }
 
     const existingEvent = await getEventByDate(user.id, context.subContext as Date)
-    console.log('Checkpoint 1')
     
     if (context.messages.length === 0) {
       messages = [
@@ -59,22 +57,20 @@ export function AiWrapper({ children } : {
 
     setContext(prev => ({ ...prev, messages, display_messages: [...prev.display_messages, { role: 'user', content: userMessage }] }));
 
-    console.log('Checkpoint 2')
-
     const res = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ messages }),
     });
-
-    console.log('Checkpoint 3')
   
     const data = await res.json();
     const raw = data.reply;
 
     const titleMatch = raw.match(/##TITLE##\s*(.+)/);
     const dateMatch = raw.match(/##DATE##\s*(\d{4}-\d{2}-\d{2})/);
-    const messageMatch = raw.match(/##MESSAGE##\s*(.+)/s);
+    // const messageMatch = raw.match(/##MESSAGE##\s*(.+)/s);
+    // using summary for now
+    const messageMatch = raw.match(/##SUMMARY##\s*(.+)/s);
     
     const parsedTitle = titleMatch ? titleMatch[1].trim() : 'Untitled';
     const parsedDate = new Date(dateMatch[1]) ?? new Date();

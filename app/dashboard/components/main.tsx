@@ -4,6 +4,9 @@ import Weather from "./weather";
 import Welcome from "./welcome";
 import { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { generateDayAnalysis } from "@/lib/generate-day-analysis-ai";
+import { useSessionContext } from "@/context/SessionContext";
+import { useEventContext } from "@/context/EventContext";
 
 export default function Main() {
       const [theme, setTheme] = useState<{ bgGradient: string; icon: LucideIcon | null; animation: string }>({
@@ -14,15 +17,17 @@ export default function Main() {
 
       const [data, setData] = useState([]);
       const [loading, setLoading] = useState(false);
+      const { user } = useSessionContext();
+      const { events } = useEventContext();
 
-      const scrapeSite = async () => {
+      const generateDailyAnalysis = async () => {
+        
         setLoading(true);
         try {
-          const res = await fetch('/api/scrape?url=https://webscraper.io/test-sites/e-commerce/allinone');
-          const result = await res.json();
-          setData(result.data || []);
+          const res = generateDayAnalysis({ user: user!, events })
+          console.log({ res })
         } catch (err) {
-          console.error('Failed to scrape:', err);
+          console.error('Failed to generate daily analysis:', err);
         } finally {
           setLoading(false);
         }
@@ -35,7 +40,8 @@ export default function Main() {
                 <Welcome />
                 <Weather theme={theme} setTheme={setTheme}/>
             </div>
-            <Button disabled={loading} onClick={scrapeSite}>  {loading ? 'Scraping...' : 'Scrape Site'}</Button>
+            {/* <Button disabled={loading} onClick={scrapeSite}>  {loading ? 'Scraping...' : 'Scrape Site'}</Button> */}
+            <Button disabled={loading} onClick={generateDailyAnalysis}>  {loading ? 'Generating...' : 'Generate Daily Analysis'}</Button>
         </div>
     );
 }

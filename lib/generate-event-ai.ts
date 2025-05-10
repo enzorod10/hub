@@ -61,7 +61,7 @@ export const generateSchedulePrompt = (
     - Start each activity with ##DELIM## followed by the start time.
     - Then another ##DELIM## followed by the activity description.
   - After the schedule, write ##DATE## followed by the planning date.
-  - Then, write ##MESSAGE## followed by your short friendly message.
+  - Finally, write ##SUMMARY## followed by a 1–2 sentence natural language summary of what the day looks like. Focus on tone, balance of work and rest, and any unique or standout elements.
 
    Example output:
 
@@ -70,7 +70,7 @@ export const generateSchedulePrompt = (
     ##DELIM## 10:00 AM ##DELIM## Work on coding project  
     ##DELIM## 1:00 PM ##DELIM## Lunch break  
     ##DATE## 2025-04-28  
-    ##MESSAGE## Here's your plan! Let me know if you'd like to adjust anything.
+    ##SUMMARY## This day is a productive but balanced day with physical activity, focused work, and time to recharge. You're set up for good momentum.
 
     Only provide the raw title, schedule, date, and message using the delimiters above. No extra commentary.`
     .trim();
@@ -79,3 +79,7 @@ export const generateSchedulePrompt = (
 
   return prompt;
 };
+
+
+//   - Then, write ##MESSAGE## followed by your short friendly message to ${userName}.
+//     ##MESSAGE## Here's your plan! Let me know if you'd like to adjust anything.
