@@ -33,7 +33,7 @@ export default function Main() {
         }
       };
       
-      console.log('Fetched Data: ' + data)
+      console.log({personalization: user?.personalization})
     return (
         <div className="w-full h-full">
             <div className={`${theme.bgGradient} flex p-4 h-1/2 w-full rounded-lg`}>

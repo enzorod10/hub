@@ -2,7 +2,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Event } from '@/app/types';
 import { useToast } from '@/hooks/use-toast';
-import { endOfDay, isWithinInterval, startOfDay } from 'date-fns';
 import { useSessionContext } from './SessionContext';
 import { format } from 'date-fns';
 
@@ -62,7 +61,6 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const addEvent: addEventType = async (data, formattedDate, action) => {
     const isoLocalDate = format(data.date, 'yyyy-MM-dd');
-    console.log({data})
 
     try {
       const response = await fetch('/api/events', {
@@ -90,19 +88,17 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           description: `${action[0].toLocaleUpperCase() + action.slice(1)} event taking place on ${formattedDate}`
         })
       }
+
       // Update events state
       setEvents((prevEvents) => {
-        const startOfDayDate = startOfDay(new Date(data.date));
-        const endOfDayDate = endOfDay(new Date(data.date));
-
         const existingEventIndex = prevEvents.findIndex(
           (event) =>
-            isWithinInterval(new Date(event.date), { start: startOfDayDate, end: endOfDayDate }) &&
+            event.date === isoLocalDate  &&
             event.user_id === data.user_id
         );
 
-
         if (existingEventIndex !== -1) {
+          console.log('should be called when updating event')
           // Update existing event
           const updatedEvents = [...prevEvents];
           updatedEvents[existingEventIndex] = { ...updatedEvents[existingEventIndex], ...result.event, ai_event_record: result.event.ai_event_record && {...result.ai_event_record, ...data.ai_event_record} };

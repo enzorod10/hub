@@ -4,7 +4,7 @@ import { User, Context } from "@/app/types";
 import { generateSchedulePrompt } from "@/lib/generate-event-ai";
 import { useEventContext } from "./EventContext";
 import { getEventByDate } from "@/lib/getEventByDate";
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 import { upsertAIEventRecord } from "@/lib/upsertAIEventRecord";
 
 type handleSchedule = (props: { user: User, userMessage: string }) => Promise<void>;
@@ -22,13 +22,10 @@ export function AiWrapper({ children } : {
   useEffect(() => {
     if (dateClicked) {
       const formattedClicked = format(dateClicked, 'yyyy-MM-dd');
-        const matchingEvent = events.find(event => {
-          console.log({event})
-        if (event.date){
-          const eventDateStr = format(new Date(event.date), 'yyyy-MM-dd');
-          return eventDateStr === formattedClicked;
-        }
+      const matchingEvent = events.find(event => {
+        return event.date === formattedClicked;
       });
+
       const aiRecord = matchingEvent?.ai_event_record;
       setContext(prev => ({ ...prev, subContext: dateClicked, messages: aiRecord?.messages ?? [], display_messages: aiRecord?.display_messages ?? []}));
     }
@@ -82,9 +79,7 @@ export function AiWrapper({ children } : {
     }
   
     const { title, date, schedule, summary } = parsed;
-
-     // Build description from schedule array
-    const parsedDate = new Date(date);
+    console.log({ title,date,schedule, summary})
 
     const newDisplayMessages: { role: 'user' | 'assistant' | 'system', content: string }[] = [
       ...(context.display_messages ?? []),
@@ -107,14 +102,14 @@ export function AiWrapper({ children } : {
     const event = await addEvent({
       title,
       user_id: user.id,
-      date: parsedDate,
+      date: parse(date, 'yyyy-MM-dd', new Date()),
       schedule: schedule,
       summary,
       ai_event_record: {
         messages: newMessages,
         display_messages: newDisplayMessages,
       }
-    }, parsedDate.toISOString(), existingEvent ? 'updated' : 'created');
+    }, format(parse(date, 'yyyy-MM-dd', new Date()), 'PPPP'), existingEvent ? 'updated' : 'created');
 
     if (event) {
       await upsertAIEventRecord({

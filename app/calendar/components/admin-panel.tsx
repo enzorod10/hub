@@ -3,7 +3,7 @@ import React from 'react';
 import EventEditor from './event-editor';
 import { useEventContext } from '@/context/EventContext';
 import { useToast } from "@/components/ui/use-toast";
-import { endOfDay, isWithinInterval, startOfDay } from 'date-fns';
+import {format } from 'date-fns';
 
 const AdminPanel = () => {
   const { toast } = useToast();
@@ -11,18 +11,19 @@ const AdminPanel = () => {
 
   // Filter events for the clicked date
   const clickedDateEvents = events.filter(event => {
-      const eventDate = new Date(event.date);
-      return eventDate.toDateString() === (dateClicked ? dateClicked.toDateString() : new Date().toDateString());
+    return format(dateClicked, 'yyyy-MM-dd') === event.date
   });
 
-  const handleDeleteEvent = async (data: { user_id: string, date: Date }, formattedDate: string) => {
+  const handleDeleteEvent = async (date: Date, formattedDate: string) => {
+    const isoLocalDate = format(date, 'yyyy-MM-dd');
+    
     try {
       const response = await fetch('/api/events', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ date: isoLocalDate }),
       });
 
       if (!response.ok) {
@@ -43,16 +44,13 @@ const AdminPanel = () => {
         })
       }
 
-      // Update events state
-      setEvents((prevEvents) => {
-        const startOfDayDate = startOfDay(new Date(data.date));
-        const endOfDayDate = endOfDay(new Date(data.date));
-        return prevEvents.filter(
-          (event) =>
-            !(isWithinInterval(new Date(event.date), { start: startOfDayDate, end: endOfDayDate }) &&
-            event.user_id === data.user_id)
-        );
-      });
+    // Update events state
+    setEvents((prevEvents) => {
+      return prevEvents.filter(
+        (event) =>
+          !(event.date === isoLocalDate)
+    )});
+    
     } catch (error) {
       setOpenEditor(false);
       toast({

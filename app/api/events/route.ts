@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { parse, startOfDay, endOfDay } from 'date-fns';
 import { createClient } from '@/utils/supabase/server';
 
 export async function GET(request: NextRequest) {
@@ -60,18 +59,12 @@ export async function POST(request: NextRequest) {
         }
 
         const user_id = user.id;
-        console.log({date, title, schedule, summary})
 
-        const localDate = parse(date, 'yyyy-MM-dd', new Date()); // parses as local midnight
-        const startOfDayDate = startOfDay(localDate).toISOString();
-        const endOfDayDate = endOfDay(localDate).toISOString();
-
-        const { data: existingEvent, error: fetchError } = await supabase
+        const { data: existingEvent } = await supabase
             .from('event')
             .select('*')
             .eq('user_id', user_id)
-            .gte('date', startOfDayDate)
-            .lt('date', endOfDayDate)
+            .eq('date', date)
             .single();
 
         let event;
@@ -117,6 +110,7 @@ export async function DELETE(request: NextRequest) {
 
     try {
         const { date } = await request.json();
+        console.log({date})
         const {
             data: { user },
             error: userError,
@@ -128,17 +122,11 @@ export async function DELETE(request: NextRequest) {
 
         const user_id = user.id;
 
-        const startOfDayDate = startOfDay(new Date(date)).toISOString();
-        const endOfDayDate = endOfDay(new Date(date)).toISOString();
-
-        const { data, error: deleteError } = await supabase
+        const { error: deleteError } = await supabase
             .from('event')
             .delete()
             .eq('user_id', user_id)
-            .gte('date', startOfDayDate)
-            .lt('date', endOfDayDate);
-        console.log('called to delete', {data})
-
+            .eq('date', date)
 
         if (deleteError) {
             console.error('Delete error:', deleteError);

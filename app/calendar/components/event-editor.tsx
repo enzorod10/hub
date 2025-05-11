@@ -9,8 +9,8 @@ import { format } from 'date-fns';
 
 type EventEditorProps = {
   onSubmit: (data: { title: string, user_id: string, date: Date, schedule: { time: string, activity: string }[] }, formattedDate: string, action: 'created' | 'updated' | 'deleted') => void;
-  handleDeleteEvent: (data: { user_id: string, date: Date }, formattedDate: string) => void;
-  event?: { title: string, date: Date, schedule: { time: string, activity: string }[] };
+  handleDeleteEvent: (date: Date, formattedDate: string) => void;
+  event?: { title: string, date: string, summary?: string, schedule: { time: string, activity: string }[] };
   date: Date;
 }
 
@@ -123,8 +123,6 @@ const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorPr
       return { time, activity };
     });
 
-    console.log({ title, date, structuredSchedule})
-
     onSubmit(
       {
         user_id: user_id!,
@@ -180,7 +178,7 @@ const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorPr
             +
           </Button>
           <div className={`flex ${event ? 'justify-between' : 'justify-end'}`}>
-            {event && <Button onClick={() => handleDeleteEvent({ user_id: user_id!, date }, format(date, 'PPPP'))} type="button" variant="destructive">Delete</Button>}
+            {event && <Button onClick={() => handleDeleteEvent(date, format(date, 'PPPP'))} type="button" variant="destructive">Delete</Button>}
             <Button type="submit" className='me-2'>{event ? 'Update' : 'Create'}</Button>
           </div>
         </form>

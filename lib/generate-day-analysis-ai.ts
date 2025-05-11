@@ -46,8 +46,10 @@ export const generateDayAnalysis = ({ user, events }: GenerateDayAnalysisProps) 
 
     Here is the user context:
     - Name: ${user.name}
-    - Personality tone: ${user.personalization.tone}, Traits: {{personality_summary}}
-    - Goals: {{top_goals}}
+    - Personality tone: ${user.personalization.tone}, Traits: ${3}
+    - Goals: ${user.personalization.goals.map(arrItem => {
+        return arrItem.goal
+    })}
     - Priorities today: {{top_priorities}}
     - Long-term clarity: {{long_term_clarity}}/10
     - Employed: {{is_employed}}, work hours: {{work_start}}–{{work_end}}, commute: {{commute_total_minutes}} min

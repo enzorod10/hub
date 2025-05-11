@@ -1,9 +1,10 @@
 'use client';
 import { useEffect, useState } from "react";
 import Cell from "./cell";
-import { getYear, getMonth, getDaysInMonth, getDay, startOfMonth, isBefore, isToday, isAfter, format } from 'date-fns'
+import { getYear, getMonth, getDaysInMonth, getDay, startOfMonth, isBefore, isToday, isAfter, parse } from 'date-fns'
 import { useEventContext } from "@/context/EventContext";
-import { Event } from "@/app/types"
+import { Event } from "@/app/types";
+import { format } from 'date-fns';
 
 const monthsOfTheYear: string[] = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ]
 
@@ -25,11 +26,9 @@ const Calendar = () => {
         for (let i = 0; i < monthArray.length; i++) {
             if (i >= firstDayOfMonth % 7) {
               const date = new Date(yearSelected, monthSelected - 1, (i - firstDayOfMonth % 7) + 1);
-
-                const formatted = format(date, 'yyyy-MM-dd');
-                monthMappedTemp[i] = formatted; 
+              monthMappedTemp[i] =  format(date, 'yyyy-MM-dd');
             } else {
-                monthMappedTemp[i] = undefined;
+              monthMappedTemp[i] = undefined;
             }
           }
 
@@ -57,11 +56,12 @@ const Calendar = () => {
 
     const getEventStatusColor = (event?: Event) => {
         if (!event) return ''; // No event, no dot
-        if (isToday(new Date(event.date))) {
+        const date = parse(event.date, 'yyyy-MM-dd', new Date())
+        if (isToday(date)) {
             return 'bg-green-500'; // Event is ongoing
-        } else if (isBefore(new Date(event.date), new Date())) {
+        } else if (isBefore(date, new Date())) {
             return 'bg-gray-500 opacity-40'; // Event passed
-        } else if (isAfter(new Date(event.date), new Date())) {
+        } else if (isAfter(date, new Date())) {
             return 'bg-orange-500 opacity-40'; // Event will happen
         }
       };
@@ -84,9 +84,9 @@ const Calendar = () => {
                     return <div key={day} className="text-xs border-b border-t py-2 sm:text-sm mb-2 flex justify-center items-center"> {day} </div>
                 })}
                 {monthMapped?.map((cell, index) => {
-                    const event = events.find(event => cell && (new Date(event.date).toDateString() === cell.toDateString()));
+                    const event = events.find(event => cell && (event.date === cell));
                     const dotColor = getEventStatusColor(event);
-                    return ( <Cell key={cell ? cell.toISOString() : 0 - index} id={`date-${cell}`} date={cell} setDateClicked={setDateClicked} dotColor={dotColor} />)
+                    return ( <Cell key={cell ? cell : 0 - index} id={`date-${cell}`} date={cell} setDateClicked={setDateClicked} dotColor={dotColor} />)
                 })}
             </div>
         </div>

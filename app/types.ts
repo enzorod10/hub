@@ -29,7 +29,7 @@ export interface Event {
     schedule: { time: string; activity: string }[];
     user_id: string;
     ai_event_record: AIEventRecord | null;
-    summary: string;
+    summary?: string;
 }
 
 export interface AIEventRecord {
@@ -64,7 +64,7 @@ export interface Personalization {
       solo_recharge: number,
     },
     tone: string,
-    goals: string[],
+    goals: { goal: string }[],
     long_term_clarity: number,
     is_employed: false,
     commute_to_work: number,

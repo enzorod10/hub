@@ -42,7 +42,7 @@ export default function GetToKnowYouForm() {
       solo_recharge: user?.personalization.personality.solo_recharge ?? 5,
     },
     tone: user?.personalization.tone ?? "friendly",
-    goals: user?.personalization.goals ? user.personalization.goals.map((g: string | { goal: string }) => typeof g === 'string' ? g : g.goal) : [""],
+    goals: user?.personalization.goals ? user.personalization.goals.map((g: string | { goal: string }) => typeof g === 'string' ? { goal: g } : g) : [{ goal: "" }],
     long_term_clarity: user?.personalization.long_term_clarity ?? 5,
     is_employed: user?.personalization.is_employed ?? false,
     commute_to_work: user?.personalization.commute_to_work ?? 0,
@@ -54,7 +54,13 @@ export default function GetToKnowYouForm() {
   const nextStep = () => step < steps.length - 1 && setStep(step + 1);
   const prevStep = () => step > 0 && setStep(step - 1);
 
-  const update = (key: string, value: string | number | boolean | string[]) => setFormData({ ...formData, [key]: value });
+  const update = (key: string, value: string | number | boolean | string[] | { goal: string }[]) => {
+    if (key === "goals" && Array.isArray(value)) {
+      setFormData({ ...formData, goals: value as { goal: string }[] });
+    } else {
+      setFormData({ ...formData, [key]: value });
+    }
+  };
   const updateNested = (section: string, key: string, value: string | number) => {
     setFormData({
       ...formData,
@@ -201,16 +207,16 @@ export default function GetToKnowYouForm() {
               <Input
                 key={idx}
                 type="text"
-                value={goal}
+                value={goal.goal}
                 onChange={(e) => {
                   const newGoals = [...formData.goals];
-                  newGoals[idx] = e.target.value;
+                  newGoals[idx] = { goal: e.target.value };
                   update("goals", newGoals);
                 }}
                 placeholder={`Goal ${idx + 1}`}
               />
             ))}
-            <Button variant="link" onClick={() => update("goals", [...formData.goals, ""])} className="text-blue-500 px-0">
+            <Button variant="link" onClick={() => update("goals", [...formData.goals, { goal: "" }])} className="text-blue-500 px-0">
               + Add another goal
             </Button>
             <div>

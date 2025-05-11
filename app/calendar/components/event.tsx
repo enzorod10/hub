@@ -9,7 +9,7 @@ import {
   } from "@/components/ui/card"
 import { useEventContext } from "@/context/EventContext";
 import { Pencil } from "lucide-react";
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 import { useRef } from "react";
 import { cn } from "@/lib/utils";
 
@@ -18,17 +18,16 @@ const Event = () => {
     const eventDiv = useRef<HTMLDivElement | null>(null);
     // Filter events for the clicked date
     const clickedDateEvents = events.filter(event => {
-        const eventDate = new Date(event.date);
-        return eventDate.toDateString() === (dateClicked ? dateClicked.toDateString() : new Date().toDateString());
+        return format(dateClicked, 'yyyy-MM-dd') === event.date
     });
 
     if (clickedDateEvents.length > 0){
         return (
-            <Card ref={eventDiv} className={cn(`relative p-0!  flex-1 md:w-96 h-4/5 overflow-hidden`)}>
+            <Card ref={eventDiv} className={cn(`relative p-0! flex-1 md:w-96 h-4/5 overflow-hidden`)}>
                 <CardHeader className="p-2 sm:p-6">
                     <CardTitle>{clickedDateEvents[0].title}</CardTitle>
                     <CardDescription>
-                        {format(clickedDateEvents[0].date, 'PPPP') + ' '}
+                        {format(parse(clickedDateEvents[0].date, 'yyyy-MM-dd', new Date()), 'PPPP')}
                     </CardDescription>
                 </CardHeader>
                 {clickedDateEvents[0].schedule &&

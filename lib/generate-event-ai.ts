@@ -30,7 +30,7 @@ export const generateSchedulePrompt = (
   ${planningInstruction}
 
   ${existingEvent
-    ? `There is an existing schedule for the given day. Update or modify it based on the user's request. Preserve unchanged parts unless the user says otherwise. Here's the current schedule:\n\n${existingEvent.description}`
+    ? `There is an existing schedule for the given day. Update or modify it based on the user's request. Preserve unchanged parts unless the user says otherwise. Here's the current schedule:\n\n${JSON.stringify(existingEvent.schedule)}`
     : `There is currently nothing scheduled for the given day. Please create a full day plan from scratch.`}
 
     Here is some background about ${userName} to tailor the schedule:
