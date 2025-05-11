@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
 import Cell from "./cell";
-import { getYear, getMonth, getDaysInMonth, getDay, startOfMonth, isBefore, isToday, isAfter } from 'date-fns'
+import { getYear, getMonth, getDaysInMonth, getDay, startOfMonth, isBefore, isToday, isAfter, format } from 'date-fns'
 import { useEventContext } from "@/context/EventContext";
 import { Event } from "@/app/types"
 
@@ -10,15 +10,14 @@ const monthsOfTheYear: string[] = [ 'January', 'February', 'March', 'April', 'Ma
 const Calendar = () => {
     const [yearSelected, setYearSelected] = useState<number>(getYear(new Date()));
     const [monthSelected, setMonthSelected] = useState<number>(getMonth(new Date()) + 1);
-    const [monthMapped, setMonthMapped] = useState<(Date | undefined)[] | undefined >()
+    const [monthMapped, setMonthMapped] = useState<(string | undefined)[] | undefined >()
     const daysOfTheWeek = [ 'Sun.', 'Mon.', 'Tues.', 'Wed.', 'Thurs.', 'Fri.', 'Sat.' ];
-
 
     const { fetchEventsForMonth, events, setDateClicked } = useEventContext(); 
 
     useEffect(() => {
         fetchEventsForMonth(yearSelected, monthSelected);
-        const monthMappedTemp: (undefined | Date)[] = [];
+        const monthMappedTemp: (undefined | string)[] = [];
         const daysInMonth = getDaysInMonth(new Date(yearSelected, monthSelected - 1)); // -1 because date-fns months are 0-indexed
         const firstDayOfMonth = getDay(startOfMonth(new Date(yearSelected, monthSelected - 1)));
         const monthArray = new Array(daysInMonth + firstDayOfMonth % 7);
@@ -26,9 +25,11 @@ const Calendar = () => {
         for (let i = 0; i < monthArray.length; i++) {
             if (i >= firstDayOfMonth % 7) {
               const date = new Date(yearSelected, monthSelected - 1, (i - firstDayOfMonth % 7) + 1);
-              monthMappedTemp[i] = date;
+
+                const formatted = format(date, 'yyyy-MM-dd');
+                monthMappedTemp[i] = formatted; 
             } else {
-              monthMappedTemp[i] = undefined;
+                monthMappedTemp[i] = undefined;
             }
           }
 

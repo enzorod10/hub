@@ -8,16 +8,16 @@ import {
 import { format } from 'date-fns';
 
 type EventEditorProps = {
-  onSubmit: (data: { title: string, user_id: string, date: Date, description: string }, formattedDate: string, action: 'created' | 'updated' | 'deleted') => void;
+  onSubmit: (data: { title: string, user_id: string, date: Date, schedule: { time: string, activity: string }[] }, formattedDate: string, action: 'created' | 'updated' | 'deleted') => void;
   handleDeleteEvent: (data: { user_id: string, date: Date }, formattedDate: string) => void;
-  event?: { title: string, date: Date, description: string, user_id: string };
+  event?: { title: string, date: Date, schedule: { time: string, activity: string }[] };
   date: Date;
 }
 
 interface TimeBlockState {
   timeBlockText: string[];
   timeDefinition: string;
-  description: string;
+  activity: string;
 }
 
 const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorProps) => {
@@ -27,7 +27,7 @@ const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorPr
   const [title, setTitle] = useState(event?.title ?? "")
 
   const [timeBlocks, setTimeBlocks] = useState<TimeBlockState[]>([
-    { timeBlockText: ['', ''], timeDefinition: 'PM', description: '' },
+    { timeBlockText: ['', ''], timeDefinition: 'PM', activity: '' },
   ]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, type: string, index: number, subIndex: number, forcedValue?: string) => {
@@ -48,9 +48,9 @@ const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorPr
     setTimeBlocks(updatedBlocks);
   };
 
-  const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+  const handleactivityChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const updatedBlocks = [...timeBlocks];
-    updatedBlocks[index].description = e.target.value;
+    updatedBlocks[index].activity = e.target.value;
     setTimeBlocks(updatedBlocks);
   };
 
@@ -59,7 +59,7 @@ const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorPr
     const newTimeBlock: TimeBlockState = {
       timeBlockText: ['', ''],
       timeDefinition: 'PM',
-      description: ''
+      activity: ''
     };
     setTimeBlocks([...timeBlocks, newTimeBlock]);
   };
@@ -68,36 +68,39 @@ const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorPr
     const updatedBlocks = [...timeBlocks];
     setTimeBlocks(updatedBlocks.filter((block, idx) => idx !== index))
   }
-  
 
   useEffect(() => {
-  if (openEditor) {
-    setTitle(event?.title || '');
-    if (event?.description) {
-      const regex = /##DELIM##\s*(.*?)\s*##DELIM##\s*(.*?)(?=(##DELIM##|$))/gs;
-      const matches = [];
-      let match;
-      while ((match = regex.exec(event.description)) !== null) {
-        const timeString = match[1].trim();        // e.g. "8:00 AM"
-        const description = match[2].trim();        // e.g. "Morning jog"
+    if (openEditor) {
+      setTitle(event?.title || '');
 
-        const timeMatch = timeString.match(/(\d+):(\d+)\s*(AM|PM)/i);
-        if (timeMatch) {
-          const [, hour, minute, period] = timeMatch;
-          matches.push({
-            timeBlockText: [hour, minute],
-            timeDefinition: period.toUpperCase(),
-            description: description,
-          });
-        }
+      if (Array.isArray(event?.schedule)) {
+        const parsedBlocks = event.schedule.map(({ time, activity }) => {
+          const timeMatch = time.match(/(\d+):(\d+)\s*(AM|PM)/i);
+
+          if (timeMatch) {
+            const [, hour, minute, period] = timeMatch;
+
+            return {
+              timeBlockText: [hour, minute],     // e.g., ["8", "00"]
+              timeDefinition: period.toUpperCase(), // "AM" or "PM"
+              activity,
+            };
+          }
+
+          // Fallback if format doesn't match
+          return {
+            timeBlockText: ["", ""],
+            timeDefinition: "AM",
+            activity,
+          };
+        });
+
+        setTimeBlocks(parsedBlocks);
+      } else {
+        setTimeBlocks([]);
       }
-
-      setTimeBlocks(matches);
-    } else {
-      setTimeBlocks([]);
     }
-  }
-}, [openEditor, event]);
+  }, [openEditor, event]);
 
 
   useEffect(() => {
@@ -112,18 +115,27 @@ const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorPr
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Function to format a single time block
-    const formatTimeBlock: (timeBlock: TimeBlockState) => string = (timeBlock) => {
-      const startTime = `${timeBlock.timeBlockText[0]}:${timeBlock.timeBlockText[1]} ${timeBlock.timeDefinition}`;
-      const description = timeBlock.description;
-      return `##DELIM## ${startTime} ##DELIM## ${description}`;
-    };
 
-    // Format each time block and join them with delimiters
-    const formattedDescription = timeBlocks.map(formatTimeBlock).join('');
+    // Construct structured schedule from timeBlocks
+    const structuredSchedule = timeBlocks.map(timeBlock => {
+      const time = `${timeBlock.timeBlockText[0]}:${timeBlock.timeBlockText[1]} ${timeBlock.timeDefinition}`;
+      const activity = timeBlock.activity;
+      return { time, activity };
+    });
 
-    onSubmit({ user_id: user_id!, title, date, description: formattedDescription }, format(date, 'PPPP'), event ? 'updated' : 'created')
-  }
+    console.log({ title, date, structuredSchedule})
+
+    onSubmit(
+      {
+        user_id: user_id!,
+        title,
+        date,
+        schedule: structuredSchedule,
+      },
+      format(date, 'PPPP'),
+      event ? 'updated' : 'created'
+    );
+  };
 
   return (
     <AlertDialog onOpenChange={setOpenEditor} open={openEditor}>
@@ -149,10 +161,10 @@ const EventEditor = ({ onSubmit, handleDeleteEvent, event, date }: EventEditorPr
                     key={index}
                     timeBlockText={block.timeBlockText}
                     timeDefinition={block.timeDefinition}
-                    timeBlockDescription={block.description}
+                    timeBlockactivity={block.activity}
                     handleInputChange={handleInputChange}
                     setTimeDefinition={setTimeDefinition}
-                    setTimeBlockDescription={handleDescriptionChange}
+                    setTimeBlockactivity={handleactivityChange}
                     removeTimeBlock={removeTimeBlock}
                     index={index}
                   />
@@ -186,15 +198,15 @@ import { useEventContext } from '@/context/EventContext';
 interface TimeBlockProps {
   timeBlockText: string[];
   timeDefinition: string;
-  timeBlockDescription: string;
+  timeBlockactivity: string;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>, type: string, index: number, subIndex: number, forcedValue?: string) => void;
   setTimeDefinition: (index: number, newTimeDefinition: string) => void;
-  setTimeBlockDescription: (e: React.ChangeEvent<HTMLInputElement>, index: number) => void;
+  setTimeBlockactivity: (e: React.ChangeEvent<HTMLInputElement>, index: number) => void;
   removeTimeBlock: (index: number) => void;
   index: number;
 }
 
-const TimeBlock: React.FC<TimeBlockProps>= ({ timeBlockText, timeDefinition, timeBlockDescription, handleInputChange, setTimeDefinition, setTimeBlockDescription, removeTimeBlock, index }) => {
+const TimeBlock: React.FC<TimeBlockProps>= ({ timeBlockText, timeDefinition, timeBlockactivity, handleInputChange, setTimeDefinition, setTimeBlockactivity, removeTimeBlock, index }) => {
   return (
     <div className='relative flex flex-wrap border rounded gap-3 p-2 justify-evenly' >
       <div>
@@ -226,8 +238,8 @@ const TimeBlock: React.FC<TimeBlockProps>= ({ timeBlockText, timeDefinition, tim
       <Input 
         required
         placeholder='Activities during this time block...' 
-        value={timeBlockDescription}
-        onChange={(e) => setTimeBlockDescription(e, index)}
+        value={timeBlockactivity}
+        onChange={(e) => setTimeBlockactivity(e, index)}
       />
       <div
         onClick={() => removeTimeBlock(index)}

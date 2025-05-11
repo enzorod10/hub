@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { startOfDay, endOfDay } from 'date-fns';
+import { parse, startOfDay, endOfDay } from 'date-fns';
 import { createClient } from '@/utils/supabase/server';
 
 export async function GET(request: NextRequest) {
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient();
 
     try {
-        const { title, date, description } = await request.json();
+        const { title, date, schedule, summary } = await request.json();
         const {
             data: { user },
             error: userError,
@@ -60,9 +60,11 @@ export async function POST(request: NextRequest) {
         }
 
         const user_id = user.id;
+        console.log({date, title, schedule, summary})
 
-        const startOfDayDate = startOfDay(new Date(date)).toISOString();
-        const endOfDayDate = endOfDay(new Date(date)).toISOString();
+        const localDate = parse(date, 'yyyy-MM-dd', new Date()); // parses as local midnight
+        const startOfDayDate = startOfDay(localDate).toISOString();
+        const endOfDayDate = endOfDay(localDate).toISOString();
 
         const { data: existingEvent, error: fetchError } = await supabase
             .from('event')
@@ -77,7 +79,7 @@ export async function POST(request: NextRequest) {
         if (existingEvent) {
             const { data, error: updateError } = await supabase
                 .from('event')
-                .update({ title, description })
+                .update({ title, schedule, summary })
                 .eq('id', existingEvent.id)
                 .select('*, ai_event_record(id, messages, display_messages)')
                 .single();
@@ -91,7 +93,7 @@ export async function POST(request: NextRequest) {
         } else {
             const { data, error: createError } = await supabase
                 .from('event')
-                .insert([{ title, date, description, user_id }])
+                .insert([{ title, date, schedule, summary, user_id }])
                 .select('*, ai_event_record(id, messages, display_messages)')
                 .single();
 

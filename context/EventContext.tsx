@@ -4,8 +4,9 @@ import { Event } from '@/app/types';
 import { useToast } from '@/hooks/use-toast';
 import { endOfDay, isWithinInterval, startOfDay } from 'date-fns';
 import { useSessionContext } from './SessionContext';
+import { format } from 'date-fns';
 
-type addEventType = ( data: { user_id: string, title: string, date: Date, description: string, ai_event_record?: { messages: { role: 'user' | 'assistant' | 'system', content: string }[], display_messages: { role: 'user' | 'assistant' | 'system', content: string }[] } },
+type addEventType = ( data: { user_id: string, title: string, date: Date, summary?: string, schedule: { time: string; activity: string }[], ai_event_record?: { messages: { role: 'user' | 'assistant' | 'system', content: string }[], display_messages: { role: 'user' | 'assistant' | 'system', content: string }[] } },
     formattedDate: string,
     action: 'created' | 'updated' | 'deleted') => Promise<Event | null>
 
@@ -60,13 +61,16 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const addEvent: addEventType = async (data, formattedDate, action) => {
+    const isoLocalDate = format(data.date, 'yyyy-MM-dd');
+    console.log({data})
+
     try {
       const response = await fetch('/api/events', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({...data, date: isoLocalDate}),
       });
 
       if (!response.ok) {

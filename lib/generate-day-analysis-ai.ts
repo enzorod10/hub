@@ -18,7 +18,7 @@ export const generateDayAnalysis = ({ user, events }: GenerateDayAnalysisProps) 
         end: endOfDay(subDays(today, 1)),
       })
     )
-    .map(event => `- ${format(event.date, 'MMM d')}: ${event.description}`)
+    .map(event => `- ${format(event.date, 'MMM d')}: ${event.summary}`)
     .join('\n');
 
   const todaySummary = events
@@ -28,7 +28,7 @@ export const generateDayAnalysis = ({ user, events }: GenerateDayAnalysisProps) 
         end: endOfDay(today),
       })
     )
-    .map(event => `- ${format(event.date, 'HH:mm')}: ${event.description}`)
+    .map(event => `- ${format(event.date, 'HH:mm')}: ${event.summary}`)
     .join('\n');
 
   const tomorrowTeaser = events
@@ -38,7 +38,7 @@ export const generateDayAnalysis = ({ user, events }: GenerateDayAnalysisProps) 
         end: endOfDay(addDays(today, 3)),
       })
     )
-    .map(event => `- ${format(event.date, 'MMM d')}: ${event.description}`)
+    .map(event => `- ${format(event.date, 'MMM d')}: ${event.summary}`)
     .join('\n');
 
   const prompt = `
@@ -52,13 +52,13 @@ export const generateDayAnalysis = ({ user, events }: GenerateDayAnalysisProps) 
     - Long-term clarity: {{long_term_clarity}}/10
     - Employed: {{is_employed}}, work hours: {{work_start}}–{{work_end}}, commute: {{commute_total_minutes}} min
 
-    The previous 3 days:
+    Yesterday’s schedule:
     ${yesterdaySummary || 'No events in the last 3 days.'}
 
     Today’s schedule:
     ${todaySummary || 'No events scheduled for today.'}
 
-    The next 3 days:
+    Tomorrow’s major tasks:
     ${tomorrowTeaser || 'No events in the next 3 days.'}
 
     Write a short, 3–5 sentence message that:

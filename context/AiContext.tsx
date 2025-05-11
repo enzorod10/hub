@@ -22,9 +22,12 @@ export function AiWrapper({ children } : {
   useEffect(() => {
     if (dateClicked) {
       const formattedClicked = format(dateClicked, 'yyyy-MM-dd');
-      const matchingEvent = events.find(event => {
-        const eventDateStr = format(new Date(event.date), 'yyyy-MM-dd');
-        return eventDateStr === formattedClicked;
+        const matchingEvent = events.find(event => {
+          console.log({event})
+        if (event.date){
+          const eventDateStr = format(new Date(event.date), 'yyyy-MM-dd');
+          return eventDateStr === formattedClicked;
+        }
       });
       const aiRecord = matchingEvent?.ai_event_record;
       setContext(prev => ({ ...prev, subContext: dateClicked, messages: aiRecord?.messages ?? [], display_messages: aiRecord?.display_messages ?? []}));
@@ -62,64 +65,61 @@ export function AiWrapper({ children } : {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ messages }),
     });
-  
     const data = await res.json();
-    const raw = data.reply;
 
-    const titleMatch = raw.match(/##TITLE##\s*(.+)/);
-    const dateMatch = raw.match(/##DATE##\s*(\d{4}-\d{2}-\d{2})/);
-    // const messageMatch = raw.match(/##MESSAGE##\s*(.+)/s);
-    // using summary for now
-    const messageMatch = raw.match(/##SUMMARY##\s*(.+)/s);
-    
-    const parsedTitle = titleMatch ? titleMatch[1].trim() : 'Untitled';
-    const parsedDate = new Date(dateMatch[1]) ?? new Date();
-    const displayMessage = messageMatch ? messageMatch[1].trim() : '';
-    
-    // Now, extract only the schedule part
-    const scheduleStart = raw.indexOf('##TITLE##');
-    const dateStart = raw.indexOf('##DATE##');
-    const description = (scheduleStart !== -1 && dateStart !== -1)
-      ? raw.slice(scheduleStart, dateStart).replace(/##TITLE##.*(\r?\n)+/, '').trim()
-      : '';
-    
-    setContext(prev => ({
-      ...prev,
-      messages: [...prev.messages, { role: 'assistant', content: raw }],
-      display_messages: [...prev.display_messages, { role: 'assistant', content: displayMessage }]
-    }));
-    console.log('Checkpoint 4')
+    let cleaned = data.reply.trim();
+
+    if (cleaned.startsWith('```')) {
+      cleaned = cleaned.replace(/```(?:json)?/, '').replace(/```$/, '').trim();
+    }
+
+    let parsed;
+    try {
+      parsed = JSON.parse(cleaned);
+    } catch (err) {
+      console.error('Failed to parse JSON from GPT:', err);
+      return;
+    }
+  
+    const { title, date, schedule, summary } = parsed;
+
+     // Build description from schedule array
+    const parsedDate = new Date(date);
 
     const newDisplayMessages: { role: 'user' | 'assistant' | 'system', content: string }[] = [
       ...(context.display_messages ?? []),
       { role: 'user', content: userMessage },
-      { role: 'assistant', content: displayMessage },
+      { role: 'assistant', content: summary },
     ];
 
     const newMessages: { role: 'user' | 'assistant' | 'system', content: string }[] = [
       ...(context.messages ?? []),
       { role: 'user', content: userMessage },
-      { role: 'assistant', content: raw },
+      { role: 'assistant', content: JSON.stringify(parsed, null, 2) },
     ];
+    
+    setContext(prev => ({
+      ...prev,
+      messages: newMessages,
+      display_messages: newDisplayMessages
+    }));
 
     const event = await addEvent({
-      title: parsedTitle,
+      title,
       user_id: user.id,
       date: parsedDate,
-      description,
+      schedule: schedule,
+      summary,
       ai_event_record: {
         messages: newMessages,
-        display_messages: newDisplayMessages
+        display_messages: newDisplayMessages,
       }
     }, parsedDate.toISOString(), existingEvent ? 'updated' : 'created');
 
-    console.log('Checkpoint 5')
-
-    if (event){
+    if (event) {
       await upsertAIEventRecord({
         user_id: user.id,
         event_id: event.id,
-        // target_date: parsedDate,
         messages: newMessages,
         display_messages: newDisplayMessages
       });

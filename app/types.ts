@@ -25,10 +25,11 @@ export interface Prompt{
 export interface Event {
     id: string;
     title: string;
-    date: Date
-    description: string;
+    date: string;
+    schedule: { time: string; activity: string }[];
     user_id: string;
     ai_event_record: AIEventRecord | null;
+    summary: string;
 }
 
 export interface AIEventRecord {
