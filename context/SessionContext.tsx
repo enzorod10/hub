@@ -25,12 +25,9 @@ export function SessionWrapper({ children } : {
         setTimeout(async () => {
           const { data: user, error } = await supabase
             .from('profile')
-            .select('*, personalization(*)')
+            .select('*, personalization(*), ai_day_analysis(*)')
             .eq('id', session.user.id)
             .single();
-          
-          console.log(error);
-  
           if (!error && user) {
             setSession(user);
           }
@@ -50,7 +47,7 @@ export function SessionWrapper({ children } : {
     setLoading(true);
     const { data: user, error } = await supabase
       .from('profile')
-      .select('*, personalization(*)')
+      .select('*, personalization(*), ai_day_analysis(*)')
       .eq('id', session?.id)
       .single();
     

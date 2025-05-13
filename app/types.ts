@@ -40,11 +40,19 @@ export interface AIEventRecord {
     messages: { role: 'user' | 'assistant' | 'system', content: string }[];
 }
 
+export interface AIDayAnalysis {
+    id: string;
+    user_id: string;
+    message: string;
+    date: string;
+}
+
 export interface User {
     id: string;
     created_at: Date;
     name: string;
     personalization: Personalization;
+    ai_day_analysis: AIDayAnalysis[];
 }
 
 export interface Personalization {

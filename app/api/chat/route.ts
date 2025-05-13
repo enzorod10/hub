@@ -23,10 +23,10 @@ export async function POST(req: NextRequest) {
     console.log({completion});
 
     return NextResponse.json({ reply });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error({aiChatError: error});
     return NextResponse.json(
-      { message: 'Something went wrong', error: error.message },
+      { message: 'Something went wrong', error: (error as { message: string }).message },
       { status: 500 }
     );
   }

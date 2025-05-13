@@ -1,7 +1,7 @@
 'use client';
 import { createContext, useState, useContext, Dispatch, SetStateAction, useEffect } from "react"
 import { User, Context } from "@/app/types";
-import { generateSchedulePrompt } from "@/lib/generate-event-ai";
+import { generateSchedulePrompt } from "@/lib/generate-event-ai-prompt";
 import { useEventContext } from "./EventContext";
 import { getEventByDate } from "@/lib/getEventByDate";
 import { format, parse } from 'date-fns';
