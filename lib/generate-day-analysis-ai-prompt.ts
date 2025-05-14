@@ -80,7 +80,7 @@ export const generateDayAnalysisPrompt = async ({ user }: { user: User }) => {
   : 'none';
 
   const prompt = `
-    You are an AI assistant helping a user start their day with a thoughtful, supportive message. The message will be shown at the top of their dashboard.
+    You are an AI assistant helping a user start their day with thoughtful, structured insights. Your output will be shown on their personal dashboard.
 
     Today's date is ${formattedToday} (yyyy-MM-dd)
 
@@ -105,10 +105,15 @@ export const generateDayAnalysisPrompt = async ({ user }: { user: User }) => {
     The next 3 days:
     ${nextDaysSummaries || 'No recorded summary in the next 3 days.'}
 
-    Write a short, 3–5 sentence message that:
-    - Matches their tone
-    - Encourages or motivates based on schedule/goals
-    - Reflects their mindset or productivity pattern`
+    Return ONLY valid **raw** JSON with no code blocks, backticks, or commentary.
+    Do NOT wrap the JSON in triple backticks or format it as a code block.
+
+    {
+      "overview": "<a 2-3 sentence general message for the dashboard. Do not include a greeting or address the user directly. Start with meaningful content.>",
+      "today_focus": "<highlight of today’s top priority/task>",
+      "suggestions": "<suggestion(s) for the user>",
+      "encouragement": "<motivational message tailored to mindset/goals>"
+    }`
     .trim();
 
   console.log({ dayAnalysis: prompt });

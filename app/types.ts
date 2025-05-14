@@ -43,8 +43,11 @@ export interface AIEventRecord {
 export interface AIDayAnalysis {
     id: string;
     user_id: string;
-    message: string;
     date: string;
+    overview: string;
+    today_focus: string;
+    suggestions: string;
+    encouragement: string;
 }
 
 export interface User {

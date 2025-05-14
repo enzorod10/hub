@@ -7,6 +7,7 @@ import { generateDayAnalysisPrompt } from "@/lib/generate-day-analysis-ai-prompt
 import { useSessionContext } from "@/context/SessionContext";
 import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Carousel } from "./carousel";
 
 export default function Main() {
   const [theme, setTheme] = useState<{ bgGradient: string; icon: LucideIcon | null; animation: string }>({
@@ -47,15 +48,31 @@ export default function Main() {
             });
 
             const data = await res.json();
-            const cleaned = data.reply.trim();
+
+            let cleaned = data.reply.trim();
+
+            if (cleaned.startsWith('```')) {
+              cleaned = cleaned.replace(/```(?:json)?/, '').replace(/```$/, '').trim();
+            }
+
+            let parsed;
+            try {
+              parsed = JSON.parse(cleaned);
+            } catch (err) {
+              console.error('Failed to parse JSON from GPT:', err);
+              return;
+            }
 
             // Save to Supabase
             const { error } = await supabase
               .from('ai_day_analysis')
               .insert({
-                user_id: user!.id,
-                date: today,
-                message: cleaned,
+                user_id: user.id,
+                date: new Date().toLocaleDateString('en-CA'),
+                overview: parsed.overview,
+                today_focus: parsed.today_focus,
+                suggestions: parsed.suggestions,
+                encouragement: parsed.encouragement,
               }); // Prevent duplicates
 
             if (error) {
@@ -75,12 +92,13 @@ export default function Main() {
 
   return (
       <div className="w-full h-full">
-          <div className={`${theme.bgGradient} flex p-4 h-1/2 w-full rounded-lg`}>
-              <Welcome name={user?.name} dayAnalysis={user?.ai_day_analysis.find(dayAnalysis => dayAnalysis.date === new Date().toLocaleDateString('en-CA'))}/>
-              <Weather theme={theme} setTheme={setTheme}/>
+          <div className={`flex flex-col gap-4 p-4 w-full rounded-lg`}>
+              <Welcome name={user?.name} />
+              {/* <Weather theme={theme} setTheme={setTheme}/> */}
+              <Carousel dayAnalysis={user?.ai_day_analysis.find(dayAnalysis => dayAnalysis.date === new Date().toLocaleDateString('en-CA'))}/>
           </div>
           {/* <Button disabled={loading} onClick={scrapeSite}>  {loading ? 'Scraping...' : 'Scrape Site'}</Button> */}
-          <Button  onClick={() => generateDayAnalysisPrompt({ user: user! })}> GENERATE </Button>
+          {/* <Button  onClick={() => generateDayAnalysisPrompt({ user: user! })}> GENERATE </Button> */}
       </div>
   );
 }
