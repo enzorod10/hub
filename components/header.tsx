@@ -1,13 +1,11 @@
 'use client';
 
 import React from 'react';
-import { UserNav } from './user-nav';
 import { ModeToggle } from './ui/mode-toggle';
 import Image from 'next/image';
 import { MobileSidebar } from './mobile-sidebar';
 import { cn } from '@/lib/utils';
 import { useAiContext } from '@/context/AiContext';
-
 
 export default function Header() {
   const { toggleAi, setToggleAi } = useAiContext();
@@ -31,7 +29,6 @@ export default function Header() {
         </div>
 
         <div className="flex items-center gap-2">
-          <UserNav />
           <div onClick={() => setToggleAi(prev => !prev)} className={`${toggleAi ? 'bg-blue-900' : ''} leading-none rounded-full border-2 p-2 border-blue-300 cursor-pointer`}>
             AI
           </div>

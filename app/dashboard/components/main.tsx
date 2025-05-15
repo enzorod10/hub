@@ -1,6 +1,6 @@
 'use client';
+
 import { useEffect, useState } from "react";
-import Weather from "./weather";
 import Welcome from "./welcome";
 import { LucideIcon } from "lucide-react";
 import { generateDayAnalysisPrompt } from "@/lib/generate-day-analysis-ai-prompt";

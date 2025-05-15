@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link"
 import React, { Dispatch, SetStateAction } from "react"
 import { Icons } from "@/constants/icons";
+import { UserNav } from "./user-nav";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -14,11 +15,14 @@ export default function Sidebar() {
       <nav
         className={cn(`relative hidden h-screen border-r md:block `)}
       >
-        <div className="space-y-4 py-4">
+        <div className="space-y-4 py-4 flex flex-col h-[calc(100dvh-56px)] justify-between">
           <div className="px-3 py-2">
             <div className="space-y-1">
               <Nav items={navItems} />
             </div>
+          </div>
+          <div className="px-6 py-4">
+            <UserNav />
           </div>
         </div>
       </nav>

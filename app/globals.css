@@ -173,3 +173,22 @@
   0% { transform: translateX(100%) }
   100% { transform: translateX(-100%) }
 }
+
+.embla {
+  overflow: hidden;
+}
+.embla__container {
+  display: flex;
+}
+.embla__slide {
+  flex: 0 0 100%;
+  min-width: 0;
+}
+
+.chat-drag-handle {
+  cursor: grab;
+}
+
+.chat-drag-handle:active {
+  cursor: grabbing;
+}
