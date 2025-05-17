@@ -22,14 +22,14 @@ export function AiWrapper({ children } : {
   useEffect(() => {
     if (dateClicked) {
       const formattedClicked = format(dateClicked, 'yyyy-MM-dd');
-      const matchingEvent = events.find(event => {
-        return event.date === formattedClicked;
-      });
+      // const matchingEvent = events.find(event => {
+      //   return event.date === formattedClicked;
+      // });
 
-      const aiRecord = matchingEvent?.ai_event_record;
-      setContext(prev => ({ ...prev, subContext: dateClicked, messages: aiRecord?.messages ?? [], display_messages: aiRecord?.display_messages ?? []}));
+      // const aiRecord = matchingEvent?.ai_event_record;
+      // setContext(prev => ({ ...prev, subContext: dateClicked, messages: aiRecord?.messages ?? [], display_messages: aiRecord?.display_messages ?? []}));
     }
-  }, [dateClicked, events])
+  }, [dateClicked])
 
   const [toggleAi, setToggleAi] = useState(false);
 
