@@ -14,7 +14,6 @@ interface Message {
 interface AIEventRecordParams {
   user_id: string;
   event_id: string;
-  // target_date: Date;
   messages: Message[];
   display_messages: Message[];
 }
@@ -22,7 +21,6 @@ interface AIEventRecordParams {
 export async function upsertAIEventRecord({
   user_id,
   event_id,
-  // target_date,
   messages,
   display_messages,
 }: AIEventRecordParams) {
