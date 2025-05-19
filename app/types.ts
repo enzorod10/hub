@@ -35,7 +35,6 @@ export interface Event {
 export interface AIEventRecord {
     id: string;
     user_id: string;
-    // target_date: Date;
     display_messages: { role: 'user' | 'assistant' | 'system', content: string }[];
     messages: { role: 'user' | 'assistant' | 'system', content: string }[];
 }
