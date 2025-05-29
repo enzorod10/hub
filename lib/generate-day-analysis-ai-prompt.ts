@@ -71,12 +71,12 @@ export const generateDayAnalysisPrompt = async ({ user }: { user: User }) => {
     return `${hour}:${minute} ${ampm}`;
   }
 
-  const employedBlock = user.personalization.is_employed
-  ? `They work from ${formatTime12hr(user.personalization.work_start)} to ${formatTime12hr(user.personalization.work_end)}, with a commute of ${user.personalization.commute_to_work} minutes to work and ${user.personalization.commute_from_work} minutes from work.`
+  const employedBlock = user.personalization!.is_employed
+  ? `They work from ${formatTime12hr(user.personalization!.work_start)} to ${formatTime12hr(user.personalization!.work_end)}, with a commute of ${user.personalization!.commute_to_work} minutes to work and ${user.personalization!.commute_from_work} minutes from work.`
   : `They are not currently employed.`;
 
-  const goalsList = user.personalization.goals?.length
-  ? user.personalization.goals.map((g: string | { goal: string }) => typeof g === 'string' ? g : g.goal).join(', ')
+  const goalsList = user.personalization!.goals?.length
+  ? user.personalization!.goals.map((g: string | { goal: string }) => typeof g === 'string' ? g : g.goal).join(', ')
   : 'none';
 
   const prompt = `
@@ -86,13 +86,13 @@ export const generateDayAnalysisPrompt = async ({ user }: { user: User }) => {
 
     Here is some context on the user:
     - Name: ${user.name}
-    - Wake Time: ${formatTime12hr(user.personalization.wake_time)}
-    - Sleep Hours: ${user.personalization.sleep_hours}
-    - Most Productive Time: ${user.personalization.productivity}
-    - Priorities (1–10): Health: ${user.personalization.priorities.health}, Career: ${user.personalization.priorities.career}, Social: ${user.personalization.priorities.social}, Creativity: ${user.personalization.priorities.creativity}, Rest: ${user.personalization.priorities.rest}
-    - Personality (1–10): Introvert: ${user.personalization.personality.introvert}, Structured: ${user.personalization.personality.structured}, Solo Recharge: ${user.personalization.personality.solo_recharge}
-    - Long-Term Clarity (1–10): ${user.personalization.long_term_clarity}
-    - Preferred Tone: ${user.personalization.tone}
+    - Wake Time: ${formatTime12hr(user.personalization!.wake_time)}
+    - Sleep Hours: ${user.personalization!.sleep_hours}
+    - Most Productive Time: ${user.personalization!.productivity}
+    - Priorities (1–10): Health: ${user.personalization!.priorities.health}, Career: ${user.personalization!.priorities.career}, Social: ${user.personalization!.priorities.social}, Creativity: ${user.personalization!.priorities.creativity}, Rest: ${user.personalization!.priorities.rest}
+    - Personality (1–10): Introvert: ${user.personalization!.personality.introvert}, Structured: ${user.personalization!.personality.structured}, Solo Recharge: ${user.personalization!.personality.solo_recharge}
+    - Long-Term Clarity (1–10): ${user.personalization!.long_term_clarity}
+    - Preferred Tone: ${user.personalization!.tone}
     - ${employedBlock}
     - Their current goals are: ${goalsList}
 

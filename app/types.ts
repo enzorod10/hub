@@ -53,7 +53,7 @@ export interface User {
     id: string;
     created_at: Date;
     name: string;
-    personalization: Personalization;
+    personalization?: Personalization;
     ai_day_analysis: AIDayAnalysis[];
 }
 
@@ -76,7 +76,7 @@ export interface Personalization {
     tone: string,
     goals: { goal: string }[],
     long_term_clarity: number,
-    is_employed: false,
+    is_employed: boolean,
     commute_to_work: number,
     commute_from_work: number,
     work_start: string,

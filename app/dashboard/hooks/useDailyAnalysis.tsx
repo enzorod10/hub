@@ -69,6 +69,6 @@ export const useDailyAnalysis = (user: User | null) => {
             }
         };
 
-        generateDailyAnalysis();
+        user.personalization && generateDailyAnalysis();
     }, [user]);
 };

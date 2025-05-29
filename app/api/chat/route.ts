@@ -9,6 +9,7 @@ const client = new OpenAI({
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const { messages } = body;
+  console.log(process.env['GITHUB_TOKEN'])
 
   try {
     const completion = await client.chat.completions.create({

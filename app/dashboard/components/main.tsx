@@ -27,7 +27,7 @@ export default function Main() {
           <div className={`flex flex-col gap-4 p-4 w-full rounded-lg`}>
             <div className="flex">
               <Welcome name={user?.name} />
-              <Weather theme={theme} setTheme={setTheme}/>
+              {/* <Weather theme={theme} setTheme={setTheme}/> */}
             </div>
             <Carousel dayAnalysis={user?.ai_day_analysis.find(dayAnalysis => dayAnalysis.date === new Date().toLocaleDateString('en-CA'))}/>
             <Tasks dayEvent={events.find(event => event.date === new Date().toLocaleDateString('en-CA') )}/>

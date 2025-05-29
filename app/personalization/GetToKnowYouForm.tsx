@@ -26,29 +26,29 @@ export default function GetToKnowYouForm() {
 
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState<Personalization>({
-    wake_time: user?.personalization.wake_time ?? "07:00",
-    productivity: user?.personalization.productivity ?? "morning",
-    sleep_hours: user?.personalization.sleep_hours ?? 8,
+    wake_time: user?.personalization?.wake_time ?? "07:00",
+    productivity: user?.personalization?.productivity ?? "morning",
+    sleep_hours: user?.personalization?.sleep_hours ?? 8,
     priorities: {
-      health: user?.personalization.priorities.health ?? 5,
-      career: user?.personalization.priorities.career ?? 5,
-      social: user?.personalization.priorities.social ?? 5,
-      creativity: user?.personalization.priorities.creativity ?? 5,
-      rest: user?.personalization.priorities.rest ?? 5,
+      health: user?.personalization?.priorities.health ?? 5,
+      career: user?.personalization?.priorities.career ?? 5,
+      social: user?.personalization?.priorities.social ?? 5,
+      creativity: user?.personalization?.priorities.creativity ?? 5,
+      rest: user?.personalization?.priorities.rest ?? 5,
     },
     personality: {
-      introvert: user?.personalization.personality.introvert ?? 5,
-      structured: user?.personalization.personality.structured ?? 5,
-      solo_recharge: user?.personalization.personality.solo_recharge ?? 5,
+      introvert: user?.personalization?.personality.introvert ?? 5,
+      structured: user?.personalization?.personality.structured ?? 5,
+      solo_recharge: user?.personalization?.personality.solo_recharge ?? 5,
     },
-    tone: user?.personalization.tone ?? "friendly",
-    goals: user?.personalization.goals ? user.personalization.goals.map((g: string | { goal: string }) => typeof g === 'string' ? { goal: g } : g) : [{ goal: "" }],
-    long_term_clarity: user?.personalization.long_term_clarity ?? 5,
-    is_employed: user?.personalization.is_employed ?? false,
-    commute_to_work: user?.personalization.commute_to_work ?? 0,
-    commute_from_work: user?.personalization.commute_from_work ?? 0,
-    work_start: user?.personalization.work_start ?? "09:00",
-    work_end: user?.personalization.work_end ?? "17:00",
+    tone: user?.personalization?.tone ?? "friendly",
+    goals: user?.personalization?.goals ? user.personalization.goals.map((g: string | { goal: string }) => typeof g === 'string' ? { goal: g } : g) : [{ goal: "" }],
+    long_term_clarity: user?.personalization?.long_term_clarity ?? 5,
+    is_employed: user?.personalization?.is_employed ?? false,
+    commute_to_work: user?.personalization?.commute_to_work ?? 0,
+    commute_from_work: user?.personalization?.commute_from_work ?? 0,
+    work_start: user?.personalization?.work_start ?? "09:00",
+    work_end: user?.personalization?.work_end ?? "17:00",
   });
 
   const nextStep = () => step < steps.length - 1 && setStep(step + 1);
@@ -73,6 +73,8 @@ export default function GetToKnowYouForm() {
 
     async function handleSubmit(e: React.MouseEvent<HTMLButtonElement>) {
       e.preventDefault();
+
+      console.log(user)
 
       if (!user) return;
 
