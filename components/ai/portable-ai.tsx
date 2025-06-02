@@ -65,8 +65,6 @@ export default function PortableAI() {
               </div>}
             </div>
             <div className="flex items-center ">
-              {/* <Minus size={18} className="hover:bg-slate-200 p-2 box-content"/>
-              <Square size={18} className="hover:bg-slate-200 p-2 box-content"/> */}
               <X onClick={() => setToggleAi(false)} size={18} className="hover:bg-slate-200 p-2 box-content rounded-tr-md"/>
             </div>
           </div>
