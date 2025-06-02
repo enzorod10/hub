@@ -27,8 +27,8 @@ export default function Tasks({ dayEvent }: { dayEvent: Event | undefined }) {
         ) : (
           dayEvent.schedule.map((item, idx) => (
             <li key={idx} className="flex items-center py-4">
-              <span className="w-20 font-mono text-blue-600">{item.time}</span>
-              <span className="ml-4 text-gray-700">{item.activity}</span>
+              <span className="w-20 font-mono text-blue-600 whitespace-nowrap text-center flex-shrink-0">{item.time}</span>
+              <span className="ml-4 text-gray-700 break-words">{item.activity}</span>
             </li>
           ))
         )}

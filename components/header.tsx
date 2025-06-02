@@ -29,9 +29,23 @@ export default function Header() {
         </div>
 
         <div className="flex items-center gap-2">
-          <div onClick={() => setToggleAi(prev => !prev)} className={`${toggleAi ? 'bg-blue-900' : ''} leading-none rounded-full border-2 p-2 border-blue-300 cursor-pointer`}>
-            AI
-          </div>
+          <button
+            onClick={() => setToggleAi(prev => !prev)}
+            className={`transition-colors duration-200 flex items-center justify-center w-10 h-10 rounded-full border-2 shadow-sm focus:outline-none focus:ring-2 active:scale-95
+              ${toggleAi
+                ? 'border-blue-600 bg-gradient-to-br from-blue-500 to-blue-700 ring-2 ring-blue-400/50'
+                : 'border-blue-300 bg-gradient-to-br from-blue-100 to-blue-200 hover:from-blue-200 hover:to-blue-300'}
+            `}
+            aria-pressed={toggleAi}
+            type="button"
+          >
+            <span className="sr-only">Toggle AI</span>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={toggleAi ? 'text-white' : 'text-blue-500'}>
+              <circle cx="12" cy="12" r="10" />
+              <path d="M15.5 8.5a4 4 0 0 0-7 3c0 2.5 2 4.5 4.5 4.5s4.5-2 4.5-4.5a4 4 0 0 0-2-3.5" />
+              <circle cx="12" cy="12" r="2" fill={toggleAi ? '#fff' : '#3b82f6'} />
+            </svg>
+          </button>
           <ModeToggle />
         </div>
       </nav>

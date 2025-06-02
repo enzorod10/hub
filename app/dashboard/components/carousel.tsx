@@ -31,10 +31,11 @@ export const Carousel = ({ dayAnalysis }: { dayAnalysis?: AIDayAnalysis }) => {
         {slides.map((slide) => (
           <div
             key={slide.title}
-            className="embla__slide min-w-full sm:min-w-[80%] md:min-w-[60%] bg-white rounded-xl shadow p-6 flex flex-col gap-2"
+            className="embla__slide min-w-full sm:min-w-[80%] md:min-w-[60%] bg-white border-2 border-blue-300 rounded-xl shadow p-6 flex flex-col gap-2 select-none"
+            style={{ userSelect: 'none' }}
           >
-            <div className="text-xl font-semibold text-gray-700">{slide.title}</div>
-            <div className="text-gray-800 text-base">{slide.content}</div>
+            <div className="text-xl font-semibold text-gray-700 select-none" style={{ userSelect: 'none' }}>{slide.title}</div>
+            <div className="text-gray-800 text-base select-none" style={{ userSelect: 'none' }}>{slide.content}</div>
           </div>
         ))}
       </div>

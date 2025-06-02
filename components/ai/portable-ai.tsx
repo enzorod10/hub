@@ -10,7 +10,7 @@ import { Minus, Square, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function PortableAI() {
-  const { toggleAi, context, setToggleAi } = useAiContext();
+  const { toggleAi, context, setToggleAi, loading, error } = useAiContext();
   const { user } = useSessionContext();
 
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -70,7 +70,13 @@ export default function PortableAI() {
               <X onClick={() => setToggleAi(false)} size={18} className="hover:bg-slate-200 p-2 box-content rounded-tr-md"/>
             </div>
           </div>
-          <Chatroom user={user!}/>
+          {loading && (
+            <div className="flex-1 flex items-center justify-center text-blue-500 font-semibold">Loading AI response...</div>
+          )}
+          {error && (
+            <div className="flex-1 flex items-center justify-center text-red-500 font-semibold">{error}</div>
+          )}
+          {!loading && !error && <Chatroom user={user!}/>} 
         </div>
       </Rnd>
   )}
