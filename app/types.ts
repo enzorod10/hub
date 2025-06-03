@@ -57,6 +57,12 @@ export interface User {
     ai_day_analysis: AIDayAnalysis[];
 }
 
+export interface Goal {
+  goal: string;
+  timeframe: string;
+  motivation: string;
+}
+
 export interface Personalization {
     wake_time: string,
     productivity: string,
@@ -74,7 +80,7 @@ export interface Personalization {
       solo_recharge: number,
     },
     tone: string,
-    goals: { goal: string }[],
+    goals: Goal[],
     long_term_clarity: number,
     is_employed: boolean,
     commute_to_work: number,

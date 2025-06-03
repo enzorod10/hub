@@ -66,31 +66,67 @@ export default {
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
   		},
-		animation: {
-			float: 'float 6s ease-in-out infinite',
-			raindrop: 'raindrop 1s ease-in-out infinite',
-			flash: 'flash 1s ease-in-out infinite',
-			snow: 'snow 10s linear infinite'
-		},
-		keyframes: {
-			float: {
-				'0%, 100%': { transform: 'translateY(0px)' },
-				'50%': { transform: 'translateY(-10px)' }
-			},
-			raindrop: {
-				'0%': { opacity: '1', transform: 'translateY(0)' },
-				'100%': { opacity: '0', transform: 'translateY(20px)' }
-			},
-			flash: {
-				'0%, 100%': { opacity: '1' },
-				'50%': { opacity: '0.2' }
-			},
-			snow: {
-				'0%': { transform: 'translateY(-100%)' },
-				'100%': { transform: 'translateY(100%)' }
-			}
-		}
+  		animation: {
+  			float: 'float 6s ease-in-out infinite',
+  			raindrop: 'raindrop 1s ease-in-out infinite',
+  			flash: 'flash 1s ease-in-out infinite',
+  			snow: 'snow 10s linear infinite',
+  			'accordion-down': 'accordion-down 0.2s ease-out',
+  			'accordion-up': 'accordion-up 0.2s ease-out'
+  		},
+  		keyframes: {
+  			float: {
+  				'0%, 100%': {
+  					transform: 'translateY(0px)'
+  				},
+  				'50%': {
+  					transform: 'translateY(-10px)'
+  				}
+  			},
+  			raindrop: {
+  				'0%': {
+  					opacity: '1',
+  					transform: 'translateY(0)'
+  				},
+  				'100%': {
+  					opacity: '0',
+  					transform: 'translateY(20px)'
+  				}
+  			},
+  			flash: {
+  				'0%, 100%': {
+  					opacity: '1'
+  				},
+  				'50%': {
+  					opacity: '0.2'
+  				}
+  			},
+  			snow: {
+  				'0%': {
+  					transform: 'translateY(-100%)'
+  				},
+  				'100%': {
+  					transform: 'translateY(100%)'
+  				}
+  			},
+  			'accordion-down': {
+  				from: {
+  					height: '0'
+  				},
+  				to: {
+  					height: 'var(--radix-accordion-content-height)'
+  				}
+  			},
+  			'accordion-up': {
+  				from: {
+  					height: 'var(--radix-accordion-content-height)'
+  				},
+  				to: {
+  					height: '0'
+  				}
+  			}
+  		}
   	}
-},
+  },
   plugins: [tailwindcssAnimate],
 } satisfies Config;
