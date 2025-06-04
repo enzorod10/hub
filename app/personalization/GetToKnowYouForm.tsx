@@ -46,10 +46,10 @@ export default function GetToKnowYouForm() {
     goals: user?.personalization?.goals
       ? user.personalization.goals.map((g: any) =>
           typeof g === 'string'
-            ? { goal: g, timeframe: '', motivation: '' }
-            : { goal: g.goal ?? '', timeframe: g.timeframe ?? '', motivation: g.motivation ?? '' }
+            ? { goal: g, timeframe: '', motivation: '', timeframe_set: undefined }
+            : { goal: g.goal ?? '', timeframe: g.timeframe ?? '', motivation: g.motivation ?? '', timeframe_set: g.timeframe_set ?? undefined }
         )
-      : [{ goal: '', timeframe: '', motivation: '' }],
+      : [{ goal: '', timeframe: '', motivation: '', timeframe_set: undefined }],
     long_term_clarity: user?.personalization?.long_term_clarity ?? 5,
     is_employed: user?.personalization?.is_employed ?? false,
     commute_to_work: user?.personalization?.commute_to_work ?? 0,
@@ -226,12 +226,15 @@ export default function GetToKnowYouForm() {
                     value={goal.timeframe}
                     onChange={(e) => {
                       const newGoals = [...formData.goals];
-                      newGoals[idx] = { ...newGoals[idx], timeframe: e.target.value };
+                      newGoals[idx] = { ...newGoals[idx], timeframe: e.target.value, timeframe_set: new Date().toISOString() };
                       update("goals", newGoals);
                     }}
                     placeholder="Time frame (e.g. 'by Dec 2025', 'in 6 months', or a date)"
                     className="mb-1"
                   />
+                  <div className="text-xs text-gray-400 italic">
+                    {goal.timeframe_set ? `Set/modified: ${new Date(goal.timeframe_set).toLocaleDateString()}` : ''}
+                  </div>
                   <Input
                     type="text"
                     value={goal.motivation}

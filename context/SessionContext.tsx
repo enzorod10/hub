@@ -2,6 +2,7 @@
 import { createClient } from "@/utils/supabase/client";
 import { useEffect, createContext, useState, useContext, useMemo, useCallback } from "react"
 import { User } from "@/app/types";
+import { useRouter } from "next/navigation"; // Add this import
 
 const SessionContext = createContext<{ user: User | null, 
   updateSession: () => void, loading: boolean }>(
@@ -13,6 +14,7 @@ const supabase = createClient();
 export function SessionWrapper({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter(); // Initialize router
 
   useEffect(() => {
     setLoading(true);
@@ -39,6 +41,12 @@ export function SessionWrapper({ children }: { children: React.ReactNode }) {
 
     return () => subscription?.subscription?.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (!loading && !session) {
+      router.replace('/');
+    }
+  }, [loading, session, router]);
 
   const updateSession = useCallback(async () => {
     setLoading(true);

@@ -18,7 +18,7 @@ export function MobileSidebar() {
           <SheetTrigger asChild>
             <MenuIcon />
           </SheetTrigger>
-          <SheetContent side="left" className="!px-0 sm:hidden">
+          <SheetContent side="left" className="!px-0 md:hidden">
             <SheetTitle className="sr-only">
               Navigation
             </SheetTitle>
