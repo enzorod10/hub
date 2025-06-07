@@ -43,6 +43,7 @@ export function SessionWrapper({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
+    console.log(session)
     if (!loading && !session) {
       router.replace('/');
     }

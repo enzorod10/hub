@@ -8,7 +8,6 @@ import { Carousel } from "./carousel";
 import { useDailyAnalysis } from "../hooks/useDailyAnalysis";
 import Tasks from "./tasks";
 import { useEventContext } from "@/context/EventContext";
-import Weather from "./weather";
 
 export default function Main() {
   const [theme, setTheme] = useState<{ bgGradient: string; icon: LucideIcon | null; animation: string }>({
@@ -27,7 +26,6 @@ export default function Main() {
           <div className={`flex flex-col gap-4 p-4 w-full rounded-lg`}>
             <div className="flex">
               <Welcome name={user?.name} />
-              {/* <Weather theme={theme} setTheme={setTheme}/> */}
             </div>
             <Carousel dayAnalysis={user?.ai_day_analysis.find(dayAnalysis => dayAnalysis.date === new Date().toLocaleDateString('en-CA'))}/>
             <Tasks dayEvent={events.find(event => event.date === new Date().toLocaleDateString('en-CA') )}/>
