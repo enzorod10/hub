@@ -38,6 +38,26 @@ export const PersonalityAndPreferences = ({ formData, update, updateNested }: { 
                     <SelectItem value="formal">Formal</SelectItem>
                 </SelectContent>
                 </Select>
+                <Label className="mb-1 block">Break Preferences</Label>
+                <div className="flex gap-2">
+                  <Select value={formData.break_preferences.type} onValueChange={val => updateNested("break_preferences", "type", val)}>
+                    <SelectTrigger><SelectValue placeholder="Type" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="short">Short & Frequent</SelectItem>
+                      <SelectItem value="long">Longer Chunks</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select value={formData.break_preferences.style} onValueChange={val => updateNested("break_preferences", "style", val)}>
+                    <SelectTrigger><SelectValue placeholder="Style" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="passive">Passive</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Label className="mb-1 block">Decision Fatigue Threshold: {formData.decision_fatigue_threshold}</Label>
+                <Slider min={1} max={10} step={1} defaultValue={[formData.decision_fatigue_threshold]} onValueChange={([val]) => update("decision_fatigue_threshold", val)} />
+                
             </div>
             </AccordionContent>
         </AccordionItem>

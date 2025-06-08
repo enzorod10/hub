@@ -66,7 +66,8 @@ export interface Goal {
 
 export interface Personalization {
     wake_time: string,
-    productivity: string,
+    focus_duration: number, // in minutes
+    task_switching_comfort: number, // 1-10 scale
     sleep_hours: number,
     priorities: {
       health: number,
@@ -74,6 +75,8 @@ export interface Personalization {
       social: number,
       creativity: number,
       rest: number,
+      learning: number,
+      family: number,
     },
     personality: {
       introvert: number,
@@ -82,10 +85,17 @@ export interface Personalization {
     },
     tone: string,
     goals: Goal[],
-    long_term_clarity: number,
+    direction_clarity: number,
     is_employed: boolean,
     commute_to_work: number,
     commute_from_work: number,
+    work_days: boolean[], // [Sun, Mon, Tue, Wed, Thu, Fri, Sat]
+    commute_days: boolean[],
     work_start: string,
     work_end: string,
+    flexible_buffer_time: number, // in minutes
+    energy_curve: { morning: number, afternoon: number, evening: number },
+    break_preferences: { type: string, style: string },
+    decision_fatigue_threshold: number, // 1-10 scale
+    location_flexibility: string,
 }

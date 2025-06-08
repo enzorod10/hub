@@ -6,15 +6,16 @@ import { useSessionContext } from "@/context/SessionContext";
 import { useRouter } from 'next/navigation';
 
 export default function Home() {
-  const router = useRouter()
-  const { user } = useSessionContext();
+  const router = useRouter();
+  const { user, loading } = useSessionContext();
 
   useEffect(() => {
-    // If the user is already authenticated, redirect them away from the login page
-    if (user) {
-      router.push('/dashboard'); // Redirect to the dashboard or any other page
+    if (!loading && user) {
+      router.push('/dashboard');
     }
-  }, [user, router]);
+  }, [loading, user, router]);
+
+  if (loading) return null; // or a spinner
 
   return (
     <div className="w-full h-screen bg-gray-100 flex flex-col items-center justify-center">
@@ -24,7 +25,6 @@ export default function Home() {
       </header>
       <main className="text-center">
         <GoogleSignIn />
-
       </main>
       <footer className="mt-12 text-gray-500 text-sm">
         © {new Date().getFullYear()} Your Hub. All rights reserved.

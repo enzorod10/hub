@@ -17,30 +17,39 @@ export function SessionWrapper({ children }: { children: React.ReactNode }) {
   const router = useRouter(); // Initialize router
 
   useEffect(() => {
-    setLoading(true);
+  const getInitialSession = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
 
-    const { data: subscription } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (!session?.user) {
-        setSession(null);
-        setLoading(false);
-        return;
-      }
-
-      const { data: user, error } = await supabase
-        .from('profile')
-        .select('*, personalization(*), ai_day_analysis(*)')
-        .eq('id', session.user.id)
-        .single();
-
-      if (!error && user) {
-        setSession(user);
-      }
-
+    if (!session?.user) {
+      setSession(null);
       setLoading(false);
-    });
+      return;
+    }
 
-    return () => subscription?.subscription?.unsubscribe();
-  }, []);
+    const { data: user, error } = await supabase
+      .from('profile')
+      .select('*, personalization(*), ai_day_analysis(*)')
+      .eq('id', session.user.id)
+      .single();
+
+    if (!error && user) {
+      setSession(user);
+    }
+
+    setLoading(false);
+  };
+
+  getInitialSession();
+
+  const { data: subscription } = supabase.auth.onAuthStateChange(() => {
+    getInitialSession();
+  });
+
+  return () => subscription.subscription?.unsubscribe();
+}, []);
+
+
+  console.log({check: session?.personalization?.goals})
 
   useEffect(() => {
     console.log(session)

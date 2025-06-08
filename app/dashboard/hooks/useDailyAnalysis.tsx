@@ -3,7 +3,7 @@ import { createClient } from '@/utils/supabase/client'; // Adjust path as needed
 import { User } from '@/app/types';
 import { generateDayAnalysisPrompt } from '@/lib/generate-day-analysis-ai-prompt';
 
-export const useDailyAnalysis = (user: User | null) => {
+export const useDailyAnalysis = (user: User | null, setDailyAnalysisLoading?: (loading: boolean) => void) => {
     const hasGeneratedRef = useRef(false);
 
     useEffect(() => {
@@ -20,9 +20,8 @@ export const useDailyAnalysis = (user: User | null) => {
         hasGeneratedRef.current = true;
 
         const generateDailyAnalysis = async () => {
-            console.log('CHECK THIS')
             const supabase = createClient();
-
+            setDailyAnalysisLoading && setDailyAnalysisLoading(true);
             try {
             const message = await generateDayAnalysisPrompt({ user });
 
@@ -66,6 +65,8 @@ export const useDailyAnalysis = (user: User | null) => {
             }
             } catch (err) {
             console.error('Failed to generate daily analysis:', err);
+            } finally {
+              setDailyAnalysisLoading && setDailyAnalysisLoading(false);
             }
         };
 

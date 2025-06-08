@@ -10,13 +10,29 @@ export const generateSchedulePrompt = (
   const formattedTarget = targetDate.toLocaleDateString('en-CA');
   const personalization = user.personalization;
 
-  const employedBlock = personalization.is_employed
-    ? `They work from ${personalization.work_start} to ${personalization.work_end}, with a commute of ${personalization.commute_to_work} minutes to work and ${personalization.commute_from_work} minutes from work to home.`
-    : `They are not currently employed.`;
+  const targetDayOfWeek = targetDate.getDay(); // 0 = Sunday, 1 = Monday, etc.
+  console.log(targetDayOfWeek)
+  const isWorkDay = personalization?.work_days?.[targetDayOfWeek] ?? false;
+  const requiresCommute = personalization?.commute_days?.[targetDayOfWeek] ?? false;
 
-  const goalsList = personalization.goals?.length
-  ? personalization.goals.map((g: string | { goal: string }) => typeof g === 'string' ? g : g.goal).join(', ')
-  : 'none';
+  const employedBlock = personalization?.is_employed
+  ? isWorkDay 
+    ? `They work from ${personalization?.work_start} to ${personalization?.work_end}${
+        requiresCommute 
+          ? `, with a commute of ${personalization?.commute_to_work} minutes to work and ${personalization?.commute_from_work} minutes from work to home.`
+          : ' (working from home today, no commute).'
+      }`
+    : `They are employed but not working today.`
+  : `They are not currently employed.`;
+  // Format goals with all fields for the AI prompt
+  const goalsList = personalization?.goals?.length
+    ? personalization.goals.map((g: any, idx: number) => {
+        if (typeof g === 'string') {
+          return `${idx + 1}. Goal: ${g}`;
+        }
+        return `${idx + 1}. Goal: ${g.goal}\n   - Timeframe: ${g.timeframe || 'N/A'}\n   - Motivation: ${g.motivation || 'N/A'}\n   - Importance: ${g.importance !== undefined ? g.importance : 'N/A'}\n   - Timeframe Set: ${g.timeframe_set ? new Date(g.timeframe_set).toLocaleDateString('en-CA') : 'N/A'}`;
+      }).join('\n')
+    : 'none';
 
   const prompt = `
     You are a helpful AI personal assistant for ${userName}.
@@ -28,24 +44,46 @@ export const generateSchedulePrompt = (
       : `There is currently nothing scheduled for the given day. Please create a full day plan from scratch.`}
 
       Here is some background about ${userName} to tailor the schedule:
-      - Wake Time: ${personalization.wake_time}
-      - Sleep Hours: ${personalization.sleep_hours}
-      - Most Productive Time: ${personalization.productivity}
-      - Priorities (1–10): Health: ${personalization.priorities.health}, Career: ${personalization.priorities.career}, Social: ${personalization.priorities.social}, Creativity: ${personalization.priorities.creativity}, Rest: ${personalization.priorities.rest}
-      - Personality (1–10): Introvert: ${personalization.personality.introvert}, Structured: ${personalization.personality.structured}, Solo Recharge: ${personalization.personality.solo_recharge}
-      - Long-Term Clarity (1–10): ${personalization.long_term_clarity}
-      - Preferred Tone: ${personalization.tone}
-      - ${employedBlock}
-      - Their current goals are: ${goalsList}
+      - Wake Time: ${personalization?.wake_time}
+      - Sleep Hours: ${personalization?.sleep_hours}
+      - Focus Duration: ${personalization?.focus_duration} minutes (max time for deep work blocks)
+      - Task Switching Comfort (1–10): ${personalization?.task_switching_comfort}
+      - Energy Levels (1–10): Morning: ${personalization?.energy_curve?.morning}, Afternoon: ${personalization?.energy_curve?.afternoon}, Evening: ${personalization?.energy_curve?.evening}
+      - **Energy-based scheduling is critical**: Schedule demanding tasks during peak energy times, light tasks during low energy times.
+      - Buffer Time Preference: ${personalization?.flexible_buffer_time} minutes between activities
+      - Break Preferences: Type: ${personalization?.break_preferences?.type}, Style: ${personalization?.break_preferences?.style}
+      - Decision Fatigue Threshold (1–10): ${personalization?.decision_fatigue_threshold}
+      - Location Flexibility: ${personalization?.location_flexibility}
+      - Priorities (1–10): Health: ${personalization?.priorities.health}, Career: ${personalization?.priorities.career}, Social: ${personalization?.priorities.social}, Creativity: ${personalization?.priorities.creativity}, Rest: ${personalization?.priorities.rest}, Learning: ${personalization?.priorities.learning}, Family: ${personalization?.priorities.family}
+      - Personality (1–10): Introvert: ${personalization?.personality.introvert}, Structured: ${personalization?.personality.structured}, Solo Recharge: ${personalization?.personality.solo_recharge}
+      - Direction Clarity (1–10): ${personalization?.direction_clarity}
+      - Preferred Tone: ${personalization?.tone}
+      - **Work boundaries**: ${employedBlock}
+      - Unless explicitly told otherwise, the only activity during work hours is "Work hours". No breaks, nothing else. 
+      - Their current goals are:\n${goalsList}
+
+      **SCHEDULING GUIDELINES:**
+      - Create time blocks of 30-60 minutes minimum (no micro-scheduling)
+      - Use general activity descriptions, avoid overly specific tasks
+      - For work hours: Keep activities generic and professional - no specific meetings or personal goals
+      - Energy-based scheduling: Match task intensity to energy levels
+      - Respect focus duration limits and break preferences
+      - Allow natural flow between activities
 
       Task:
       - First, generate a short, creative, and fun title for ${userName}'s day.
       - Then, create or update the schedule:
-        - Align with their energy rhythms and productivity window
-        - Reflect their top priorities
-        - Respect their work hours (if any)
+        - **Energy-based scheduling is critical**: Schedule demanding tasks during peak energy times, lighter tasks during low energy times.
+        - Respect their focus duration limits (don't schedule work blocks longer than their focus duration)
+        - Include appropriate buffer time between activities based on their preference
+        - Plan breaks that match their type and style preferences
+        - Consider their task switching comfort when planning variety vs consistency
+        - Keep decision complexity appropriate for their fatigue threshold
+        - Align with their energy rhythms throughout the day
+        - Reflect their top priorities in time allocation
+        - Respect their work hours and location constraints (if any)
         - Integrate self-care and recharge time that fits their personality
-        - Make the tone feel ${personalization.tone}
+        - Make the tone feel ${personalization?.tone}
       - Include the planning date in the format YYYY-MM-DD.
       - Finally, write a 1–2 sentence natural language summary of what the day looks like. Focus on tone, balance of work and rest, and any unique or standout elements.
 
@@ -68,7 +106,3 @@ export const generateSchedulePrompt = (
 
   return prompt;
 };
-
-
-//   - Then, write ##MESSAGE## followed by your short friendly message to ${userName}.
-//     ##MESSAGE## Here's your plan! Let me know if you'd like to adjust anything.

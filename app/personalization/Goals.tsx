@@ -56,8 +56,8 @@ export const Goals = ({ formData, update }: { formData: Personalization, update:
                 + Add another goal
               </Button>
               <div>
-                <Label className="mb-1 block">Clarity of Long-Term Direction: {formData.long_term_clarity}</Label>
-                <Slider min={1} max={10} step={1} defaultValue={[formData.long_term_clarity]} onValueChange={([val]) => update("longTermClarity", val)} />
+                <Label className="mb-1 block">Clarity of Long-Term Direction: {formData.direction_clarity}</Label>
+                <Slider min={1} max={10} step={1} defaultValue={[formData.direction_clarity]} onValueChange={([val]) => update("longTermClarity", val)} />
               </div>
             </div>
           </AccordionContent>
