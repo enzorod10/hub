@@ -50,6 +50,14 @@ export const Goals = ({ formData, update }: { formData: Personalization, update:
                     }}
                     placeholder="Why is this goal important to you? (Motivation)"
                   />
+                  <div>
+                    <Label className="mb-1 block">Importance: {goal.importance ?? 5}</Label>
+                    <Slider min={1} max={10} step={1} defaultValue={[goal.importance ?? 5]} onValueChange={([val]) => {
+                      const newGoals = [...formData.goals];
+                      newGoals[idx] = { ...newGoals[idx], importance: val };
+                      update("goals", newGoals);
+                    }} />
+                  </div>
                 </div>
               ))}
               <Button variant="link" onClick={() => update("goals", [...formData.goals, { goal: "", timeframe: "", motivation: "" }])} className="text-blue-500 px-0">

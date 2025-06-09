@@ -58,31 +58,22 @@ export const generateSchedulePrompt = (
       - Personality (1–10): Introvert: ${personalization?.personality.introvert}, Structured: ${personalization?.personality.structured}, Solo Recharge: ${personalization?.personality.solo_recharge}
       - Direction Clarity (1–10): ${personalization?.direction_clarity}
       - Preferred Tone: ${personalization?.tone}
-      - **Work boundaries**: ${employedBlock}
-      - Unless explicitly told otherwise, the only activity during work hours is "Work hours". No breaks, nothing else. 
+      ${employedBlock}
       - Their current goals are:\n${goalsList}
-
-      **SCHEDULING GUIDELINES:**
-      - Create time blocks of 30-60 minutes minimum (no micro-scheduling)
-      - Use general activity descriptions, avoid overly specific tasks
-      - For work hours: Keep activities generic and professional - no specific meetings or personal goals
-      - Energy-based scheduling: Match task intensity to energy levels
-      - Respect focus duration limits and break preferences
-      - Allow natural flow between activities
 
       Task:
       - First, generate a short, creative, and fun title for ${userName}'s day.
       - Then, create or update the schedule:
-        - **Energy-based scheduling is critical**: Schedule demanding tasks during peak energy times, lighter tasks during low energy times.
-        - Respect their focus duration limits (don't schedule work blocks longer than their focus duration)
+        - Schedule demanding tasks during peak energy times, lighter tasks during low energy times.
+        - Create time blocks of 30 minutes minimum (no micro-scheduling)
+        - Use general activity descriptions
+        - Respect focus duration limits and break preferences
+        - Allow natural flow between activities
         - Include appropriate buffer time between activities based on their preference
         - Plan breaks that match their type and style preferences
         - Consider their task switching comfort when planning variety vs consistency
         - Keep decision complexity appropriate for their fatigue threshold
-        - Align with their energy rhythms throughout the day
-        - Reflect their top priorities in time allocation
-        - Respect their work hours and location constraints (if any)
-        - Integrate self-care and recharge time that fits their personality
+        - Unless explicitly told otherwise, the only activity during work hours is "Work hours". Nothing else. 
         - Make the tone feel ${personalization?.tone}
       - Include the planning date in the format YYYY-MM-DD.
       - Finally, write a 1–2 sentence natural language summary of what the day looks like. Focus on tone, balance of work and rest, and any unique or standout elements.

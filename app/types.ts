@@ -62,6 +62,7 @@ export interface Goal {
   timeframe: string;
   motivation: string;
   timeframe_set?: string; // ISO string for when the timeframe was set/modified
+  importance?: number;
 }
 
 export interface Personalization {

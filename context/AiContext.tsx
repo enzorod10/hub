@@ -74,6 +74,7 @@ export function AiWrapper({ children } : {
         cleaned = cleaned.replace(/```(?:json)?/, '').replace(/```$/, '').trim();
       }
       let parsed;
+      console.log(cleaned)
       try {
         parsed = JSON.parse(cleaned);
       } catch (err) {

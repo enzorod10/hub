@@ -124,8 +124,6 @@ export default function GetToKnowYouForm() {
     });
   };
 
-  console.log(user?.personalization)
-
     async function handleSubmit(e: React.MouseEvent<HTMLButtonElement>) {
       e.preventDefault();
       if (!user) return;
