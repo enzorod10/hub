@@ -21,4 +21,9 @@ export const navItems: NavItem[] = [
         href: '/personalization',
         icon: 'personalization'
     },
+    {
+        title: 'Goals',
+        href: '/goals',
+        icon: 'goals'
+    }
 ]
