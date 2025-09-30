@@ -4,7 +4,7 @@ import "./globals.css";
 import Header from "@/components/header";
 import { SessionWrapper } from "@/context/SessionContext";
 import { ThemeProvider } from "@/components/theme-provider"
-// import AlertTab from "@/components/alert-tab";
+import AlertTab from "@/components/alert-tab";
 import PortableAI from "@/components/ai/portable-ai";
 import Sidebar from "@/components/sidebar";
 import { EventProvider } from "@/context/EventContext";
@@ -47,7 +47,7 @@ export default function RootLayout({
               <AiWrapper>
                 <div className="flex flex-col">
                   <Header />
-                  {/* <AlertTab /> */}
+                  <AlertTab />
                   <div className="flex relative h-[calc(100dvh-56px)]">
                     <Sidebar />
                     <div className="flex-1 relative h-[calc(100dvh-56px)] overflow-hidden">
