@@ -11,9 +11,9 @@ export default function Header() {
   const { toggleAi, setToggleAi } = useAiContext();
   
   return (
-    <div className="top-0 left-0 right-0 border-b supports-backdrop-blur:bg-background/60 bg-background/95 backdrop-blur z-20">
-      <nav className="h-14 flex items-center justify-between px-4">
-        <div className='flex items-center'>
+    <div className="top-0 left-0 right-0 border-b supports-backdrop-blur:bg-background/60 bg-background/95 backdrop-blur z-20 shadow-md">
+      <nav className="h-16 flex items-center justify-between px-6">
+        <div className='flex items-center gap-3'>
           <div className={cn("block md:!hidden")}>
             <MobileSidebar />
           </div>
@@ -23,18 +23,18 @@ export default function Header() {
             src='/logo/hub.png'
             alt="Hub"
           />
-          <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+          <h4 className="scroll-m-20 text-2xl font-bold tracking-tight bg-gradient-to-r from-blue-600 via-indigo-500 to-blue-400 bg-clip-text text-transparent drop-shadow">
               Hub
           </h4>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => setToggleAi(prev => !prev)}
             className={`transition-colors duration-200 flex items-center justify-center w-10 h-10 rounded-full border-2 shadow-sm focus:outline-none focus:ring-2 active:scale-95
               ${toggleAi
                 ? 'border-blue-600 bg-gradient-to-br from-blue-500 to-blue-700 ring-2 ring-blue-400/50'
-                : 'border-blue-300 bg-gradient-to-br from-blue-100 to-blue-200 hover:from-blue-200 hover:to-blue-300'}
+                : 'border-blue-300 bg-gradient-to-br from-blue-100 to-blue-200 hover:from-blue-200 hover:to-blue-300 hover:border-blue-400'}
             `}
             aria-pressed={toggleAi}
             type="button"
@@ -46,6 +46,7 @@ export default function Header() {
               <circle cx="12" cy="12" r="2" fill={toggleAi ? '#fff' : '#3b82f6'} />
             </svg>
           </button>
+          <div className="h-8 w-px bg-blue-200 mx-2" />
           <ModeToggle />
         </div>
       </nav>
