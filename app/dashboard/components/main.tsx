@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Welcome from "./welcome";
-import { LucideIcon } from "lucide-react";
+// import { LucideIcon } from "lucide-react";
 import { useSessionContext } from "@/context/SessionContext";
 import { Carousel } from "./carousel";
 import { useDailyAnalysis } from "../hooks/useDailyAnalysis";
@@ -10,11 +10,11 @@ import Tasks from "./tasks";
 import { useEventContext } from "@/context/EventContext";
 
 export default function Main() {
-  const [theme, setTheme] = useState<{ bgGradient: string; icon: LucideIcon | null; animation: string }>({
-    bgGradient: 'bg-white-500',
-    icon: null,
-    animation: '',
-  });
+  // const [theme, setTheme] = useState<{ bgGradient: string; icon: LucideIcon | null; animation: string }>({
+  //   bgGradient: 'bg-white-500',
+  //   icon: null,
+  //   animation: '',
+  // });
 
   const { events } = useEventContext();
 
